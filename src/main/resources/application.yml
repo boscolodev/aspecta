@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: aspectaLib
+
+logger:
+  enabled: true
+  projectName: ASPECTA
