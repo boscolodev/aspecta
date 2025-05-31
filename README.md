@@ -1,6 +1,6 @@
 # Aspecta - Exception Handling & Logging Library
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/boscolodev/aspecta/blob/main/README-br.md)
+[![br](https://img.shields.io/badge/lang-br-green.svg)](https://github.com/boscolodev/aspecta/blob/main/README-br.md)
 
 Aspecta is a Java library based on Spring Boot that provides a standardized framework for:
 
