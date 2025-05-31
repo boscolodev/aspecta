@@ -1,35 +1,40 @@
-
 # Aspecta - Exception Handling & Logging Library
 
-Aspecta é uma biblioteca Java baseada em Spring Boot que fornece um framework padronizado para:
+[![br](https://img.shields.io/badge/lang-br-green.svg)](https://github.com/boscolodev/aspecta/blob/main/README-br.md)
 
-✅ Tratamento global de exceções com respostas automáticas.  
-✅ Fábrica de exceções para centralização das falhas.  
-✅ Logger AOP para interceptação e registro de métodos automaticamente.
+Aspecta is a Java library based on Spring Boot that provides a standardized framework for:
+
+✅ Global exception handling with automatic responses.  
+✅ Exception factory for centralized failure management.  
+✅ AOP logger for automatic method interception and logging.
+
 
 ---
 
-## ✨ Funcionalidades
+## ✨ Features
 
 ### ✅ Exception Handling
-- `@RestControllerAdvice` com `GlobalExceptionHandler`.  
-- Conversão automática de exceções `ApiErrorException` em respostas JSON padronizadas (`BasicResponse` ou `CompleteResponse`).  
-- Extração recursiva de `HttpStatus` e `ExceptionType`.  
+
+* `@RestControllerAdvice` with `GlobalExceptionHandler`.
+* Automatic conversion of `ApiErrorException` exceptions into standardized JSON responses (`BasicResponse` or `CompleteResponse`).
+* Recursive extraction of `HttpStatus` and `ExceptionType`.
 
 ### ✅ Exception Factory
-- Classe `ApiExceptionFactory` para lançar exceções de forma fluente e centralizada com diferentes sobrecargas.  
+
+* `ApiExceptionFactory` class to throw exceptions fluently and centrally with different overloads.
 
 ### ✅ Logging Aspect
-- Anotação `@LogOn` para ativar logging automático de métodos.  
-- Configuração via `application.properties`.  
-- Loga parâmetros de entrada, retorno e exceções.  
+
+* `@LogOn` annotation to enable automatic method logging.
+* Configuration via `application.properties`.
+* Logs input parameters, return values, and exceptions.
 
 ---
 
-## 🛠️ Instalação
+## 🛠️ Installation
 
-**1. Adicione a dependência:**  
-Caso publique no Maven Central ou Nexus:
+**1. Add the dependency:**
+If published on Maven Central or Nexus:
 
 ```xml
 <dependency>
@@ -39,48 +44,48 @@ Caso publique no Maven Central ou Nexus:
 </dependency>
 ```
 
-**2. Habilite o `@ComponentScan`** (se não estiver no mesmo pacote).
+**2. Enable `@ComponentScan`** (if not in the same package).
 
 ---
 
-## ⚙️ Configuração
+## ⚙️ Configuration
 
-No `application.properties` ou `application.yml`:
+In `application.properties` or `application.yml`:
 
 ```properties
 logger.enabled=true
-logger.project-name=MeuProjeto
+logger.project-name=MyProject
 ```
 
 ---
 
-## 📦 Como Usar
+## 📦 How to Use
 
-### ✅ 1. Tratamento de Exceção
+### ✅ 1. Exception Handling
 
-Lance exceções usando a `ApiExceptionFactory`:
+Throw exceptions using the `ApiExceptionFactory`:
 
 ```java
 import static br.com.gbs.aspecta.exception.handler.ApiExceptionFactory.troll;
 
-if (usuario == null) {
-    troll(ExceptionType.BASIC, "Usuário não encontrado", HttpStatus.NOT_FOUND);
+if (user == null) {
+    troll(ExceptionType.BASIC, "User not found", HttpStatus.NOT_FOUND);
 }
 ```
 
-A `GlobalExceptionHandler` automaticamente interceptará e retornará:
+The `GlobalExceptionHandler` will automatically intercept and return:
 
-- **BasicResponse**: Simples, com `status` e `message`.  
-- **CompleteResponse**: Detalhada, com `status`, `message`, `details`, `path` e `timestamp`.
+* **BasicResponse**: Simple, with `status` and `message`.
+* **CompleteResponse**: Detailed, with `status`, `message`, `details`, `path`, and `timestamp`.
 
-**Exemplo de resposta (JSON):**
+**Example response (JSON):**
 
 `ExceptionType.BASIC`:
 
 ```json
 {
   "status": "404",
-  "message": "Usuário não encontrado"
+  "message": "User not found"
 }
 ```
 
@@ -89,7 +94,7 @@ A `GlobalExceptionHandler` automaticamente interceptará e retornará:
 ```json
 {
   "status": "500",
-  "message": "Erro Interno",
+  "message": "Internal Error",
   "details": "NullPointerException",
   "path": "/api/user",
   "timestamp": "2025-05-30T12:34:56"
@@ -98,125 +103,126 @@ A `GlobalExceptionHandler` automaticamente interceptará e retornará:
 
 ---
 
-### ✅ 2. Logging Automático
+### ✅ 2. Automatic Logging
 
-Anote métodos com `@LogOn` para ativar o log AOP:
+Annotate methods with `@LogOn` to enable AOP logging:
 
 ```java
 import br.com.gbs.aspecta.logger.anotations.LogOn;
 
 @Service
-public class UsuarioService {
+public class UserService {
 
     @LogOn
-    public Usuario buscarUsuario(Long id) {
+    public User findUser(Long id) {
         return repository.findById(id)
-                         .orElseThrow(() -> troll(ExceptionType.BASIC, "Usuário não encontrado", HttpStatus.NOT_FOUND));
+                         .orElseThrow(() -> troll(ExceptionType.BASIC, "User not found", HttpStatus.NOT_FOUND));
     }
 }
 ```
 
-**Exemplo de log gerado:**
+**Example generated log:**
 
 ```text
-[MeuProjeto][UsuarioService] Método: buscarUsuario() com | Args: [1]
-[MeuProjeto][UsuarioService] Método: buscarUsuario() retornou | Retorno: Usuario{id=1, nome='João'}
+[MyProject][UserService] Method: findUser() called | Args: [1]
+[MyProject][UserService] Method: findUser() returned | Return: User{id=1, name='John'}
 ```
 
-Em caso de erro:
+In case of an error:
 
 ```text
-[MeuProjeto][UsuarioService] Método: buscarUsuario() lançou exceção | Mensagem: Usuário não encontrado
+[MyProject][UserService] Method: findUser() threw exception | Message: User not found
 ```
 
 ---
 
-## ✅ Componentes Internos
+## ✅ Internal Components
 
 ### 📁 Exception
 
-- `ApiErrorException`: Exceção padrão.  
-- `ApiExceptionFactory`: Fábrica para lançar exceções (`troll`).  
-- `GlobalExceptionHandler`: Handler global para tratamento e formatação da resposta.
+* `ApiErrorException`: Default exception.
+* `ApiExceptionFactory`: Factory to throw exceptions (`troll`).
+* `GlobalExceptionHandler`: Global handler for response formatting and exception handling.
 
 ---
 
 ### 📁 Logger
 
-- `@LogOn`: Anotação para marcar métodos que devem ser logados.  
-- `LoggerAspect`: Aspecto AOP que intercepta os métodos.  
-- `LoggerProperties`: Configuração via `application.properties`.
+* `@LogOn`: Annotation to mark methods to be logged.
+* `LoggerAspect`: AOP aspect that intercepts methods.
+* `LoggerProperties`: Configuration via `application.properties`.
 
 ---
 
-## 📝 Exemplo Completo
+## 📝 Complete Example
 
 ```java
 @RestController
 @RequestMapping("/api/user")
-public class UsuarioController {
+public class UserController {
 
-    private final UsuarioService usuarioService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     @LogOn
-    public Usuario buscarUsuario(@PathVariable Long id) {
-        return usuarioService.buscarUsuario(id);
+    public User findUser(@PathVariable Long id) {
+        return userService.findUser(id);
     }
 }
 ```
 
 ---
 
-## 🚨 Tratamento de Erros
+## 🚨 Error Handling
 
-| ExceptionType | Resposta            |
-|---------------|---------------------|
-| BASIC         | status + message    |
+| ExceptionType | Response                                      |
+| ------------- | --------------------------------------------- |
+| BASIC         | status + message                              |
 | COMPLETE      | status + message + details + path + timestamp |
 
 ---
 
-## ✅ Vantagens
+## ✅ Advantages
 
-✅ Centralização no tratamento de erros.  
-✅ Padronização na resposta de API.  
-✅ Redução de código repetitivo.  
-✅ Logging automático, configurável.
-
----
-
-## ❗ Importante
-
-- O `GlobalExceptionHandler` captura **somente** `ApiErrorException`.  
-- Para capturar outras exceções, crie novos métodos com `@ExceptionHandler`.  
-- Logging é **configurável** via `application.properties`.
+✅ Centralized error handling.
+✅ Standardized API responses.
+✅ Reduction of repetitive code.
+✅ Automatic, configurable logging.
 
 ---
 
-## ✅ Roadmap (sugestão de evolução)
+## ❗ Important
 
-- [ ] Suporte para `ProblemDetail` do Spring 6.  
-- [ ] Exportar para Maven Central.  
-- [ ] Suporte para logs assíncronos.  
-- [ ] Mensagens de erro internacionalizadas (i18n).
-- [ ] Remoção de dados sensíveis dos logs
----
-
-## 🤝 Contribuições
-
-Pull Requests são bem-vindos!
+* `GlobalExceptionHandler` only catches **`ApiErrorException`**.
+* To catch other exceptions, create new methods with `@ExceptionHandler`.
+* Logging is **configurable** via `application.properties`.
 
 ---
 
-## 🛡️ Licença
+## ✅ Roadmap (suggested improvements)
+
+* [ ] Support for Spring 6’s `ProblemDetail`.
+* [ ] Publish to Maven Central.
+* [ ] Support asynchronous logging.
+* [ ] Internationalized error messages (i18n).
+* [ ] Removal of sensitive data from logs.
+
+---
+
+## 🤝 Contributions
+
+Pull requests are welcome!
+
+---
+
+## 🛡️ License
 
 [MIT](LICENSE)
 
 ---
 
-## 📞 Contato
+## 📞 Contact
 
-- Autor: Guilherme Boscolo de Souza 
-- Email: boscolo.dev@gmail.com
-- Linkedin: https://www.linkedin.com/in/guilherme-boscolo/
+* Author: Guilherme Boscolo de Souza
+* Email: [boscolo.dev@gmail.com](mailto:boscolo.dev@gmail.com)
+* LinkedIn: [https://www.linkedin.com/in/guilherme-boscolo/](https://www.linkedin.com/in/guilherme-boscolo/)
