@@ -203,9 +203,9 @@ public class UserController {
 
 * [x] Support for Spring 6’s `ProblemDetail`.
 * [ ] Publish to Maven Central.
-* [ ] Support asynchronous logging.
-* [ ] Internationalized error messages (i18n).
-* [ ] Removal of sensitive data from logs.
+* [x] Support asynchronous logging.
+* [x] Internationalized error messages (i18n).
+* [x] Removal of sensitive data from logs.
 
 ---
 

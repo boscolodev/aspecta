@@ -199,9 +199,9 @@ public class UsuarioController {
 
 - [x] Suporte para `ProblemDetail` do Spring 6.  
 - [ ] Exportar para Maven Central.  
-- [ ] Suporte para logs assíncronos.  
-- [ ] Mensagens de erro internacionalizadas (i18n).
-- [ ] Remoção de dados sensíveis dos logs
+- [x] Suporte para logs assíncronos.  
+- [x] Mensagens de erro internacionalizadas (i18n).
+- [x] Remoção de dados sensíveis dos logs
 ---
 
 ## 🤝 Contribuições
