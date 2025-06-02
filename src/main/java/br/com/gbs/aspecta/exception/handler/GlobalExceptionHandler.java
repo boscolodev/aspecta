@@ -3,18 +3,46 @@ package br.com.gbs.aspecta.exception.handler;
 import br.com.gbs.aspecta.exception.ExceptionType;
 import br.com.gbs.aspecta.exception.dto.BasicResponse;
 import br.com.gbs.aspecta.exception.dto.CompleteResponse;
+import br.com.gbs.aspecta.exception.dto.FieldMessage;
 import br.com.gbs.aspecta.exception.exception.ApiErrorException;
+import br.com.gbs.aspecta.logger.anotations.LogOn;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final String METHOD_ARGUMENT_MESSAGE = "Erro de validação nos campos";
+
+    @LogOn
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        HttpStatus status = extractStatus(ex);
+
+        List<Map<String, String>> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> Map.of(
+                        "field", error.getField(),
+                        "message", error.getDefaultMessage()
+                ))
+                .toList();
+
+        FieldMessage response = new FieldMessage(
+                String.valueOf(status.value()),
+                METHOD_ARGUMENT_MESSAGE
+        );
+        response.setDetails(fieldErrors);
+
+        return ResponseEntity.status(status).body(response);
+    }
 
     @ExceptionHandler(ApiErrorException.class)
     public ResponseEntity<?> handleApiErrorException(ApiErrorException ex, HttpServletRequest request) {
