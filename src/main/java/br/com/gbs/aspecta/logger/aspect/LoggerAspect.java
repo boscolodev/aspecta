@@ -35,16 +35,16 @@ public class LoggerAspect {
 
         String argsString = Arrays.toString(joinPoint.getArgs());
 
-        log.info("[{}][{}] Método: {}() com | Args: {}", projectName, className, methodName, argsString);
+        log.info("[{}][{}] Entrando no método: {}() com | Args: {}", projectName, className, methodName, argsString);
 
         try {
             Object result = joinPoint.proceed();
 
-            log.info("[{}][{}] Método: {}() retornou | Retorno: {}", projectName, className, methodName, result);
+            log.info("[{}][{}] Saindo do método: {}() retornou | Retorno: {}", projectName, className, methodName, result);
 
             return result;
         } catch (Throwable ex) {
-            log.error("[{}][{}] Método: {}() lançou exceção | Mensagem: {}", projectName, className, methodName, ex.getMessage(), ex);
+            log.error("[{}][{}] O método: {}() lançou exceção {} | Mensagem: {}", projectName, className, methodName,ex.getClass(), ex.getMessage(), ex);
             throw ex;
         }
     }
