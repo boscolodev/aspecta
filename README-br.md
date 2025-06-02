@@ -197,7 +197,7 @@ public class UsuarioController {
 
 ## ✅ Roadmap (sugestão de evolução)
 
-- [ ] Suporte para `ProblemDetail` do Spring 6.  
+- [x] Suporte para `ProblemDetail` do Spring 6.  
 - [ ] Exportar para Maven Central.  
 - [ ] Suporte para logs assíncronos.  
 - [ ] Mensagens de erro internacionalizadas (i18n).

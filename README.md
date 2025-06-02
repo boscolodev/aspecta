@@ -201,7 +201,7 @@ public class UserController {
 
 ## ✅ Roadmap (suggested improvements)
 
-* [ ] Support for Spring 6’s `ProblemDetail`.
+* [x] Support for Spring 6’s `ProblemDetail`.
 * [ ] Publish to Maven Central.
 * [ ] Support asynchronous logging.
 * [ ] Internationalized error messages (i18n).
