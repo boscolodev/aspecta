@@ -11,5 +11,6 @@ import org.springframework.stereotype.Component;
 @Setter
 public class LoggerProperties {
     private boolean enabled = true;
+    private boolean enableI18n = true;
     private String projectName;
 }

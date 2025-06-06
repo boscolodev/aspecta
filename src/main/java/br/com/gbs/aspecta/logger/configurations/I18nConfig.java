@@ -1,4 +1,4 @@
-package br.com.gbs.aspecta.logger.i18n;
+package br.com.gbs.aspecta.logger.configurations;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
