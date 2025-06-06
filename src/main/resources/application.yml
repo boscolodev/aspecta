@@ -4,4 +4,5 @@ spring:
 
 logger:
   enabled: true
+  enable-i18n: true
   projectName: ASPECTA
