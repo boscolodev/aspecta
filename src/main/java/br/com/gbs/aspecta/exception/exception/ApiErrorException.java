@@ -8,17 +8,19 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 public class ApiErrorException extends RuntimeException {
-    private ExceptionType type;
-    private HttpStatus status;
+    private final ExceptionType type;
+    private final HttpStatus status;
 
     public ApiErrorException(ExceptionType type, String message) {
         super(message);
         this.type = type;
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     public ApiErrorException(ExceptionType type, String message, Throwable cause) {
         super(message, cause);
         this.type = type;
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     public ApiErrorException(ExceptionType type, String message, HttpStatus status) {

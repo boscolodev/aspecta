@@ -6,3 +6,11 @@ logger:
   enabled: true
   enable-i18n: true
   projectName: ASPECTA
+  sensitive-keys:
+    - password
+    - secret
+    - senha
+    - token
+    - key
+    - cpf
+    - cnpj

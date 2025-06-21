@@ -1,40 +1,36 @@
 # Aspecta - Exception Handling & Logging Library
 
-[![br](https://img.shields.io/badge/lang-br-green.svg)](https://github.com/boscolodev/aspecta/blob/main/README-br.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/boscolodev/aspecta/blob/main/README.md)
 
 Aspecta is a Java library based on Spring Boot that provides a standardized framework for:
 
-✅ Global exception handling with automatic responses.  
-✅ Exception factory for centralized failure management.  
-✅ AOP logger for automatic method interception and logging.
-
-
----
-
-## ✨ Features
-
-### ✅ Exception Handling
-
-* `@RestControllerAdvice` with `GlobalExceptionHandler`.
-* Automatic conversion of `ApiErrorException` exceptions into standardized JSON responses (`BasicResponse` or `CompleteResponse`).
-* Recursive extraction of `HttpStatus` and `ExceptionType`.
-
-### ✅ Exception Factory
-
-* `ApiExceptionFactory` class to throw exceptions fluently and centrally with different overloads.
-
-### ✅ Logging Aspect
-
-* `@LogOn` annotation to enable automatic method logging.
-* Configuration via `application.properties`.
-* Logs input parameters, return values, and exceptions.
+- Global exception handling with automatic responses.
+- Exception factory for centralizing failures.
+- AOP Logger for automatic method interception and logging.
 
 ---
 
-## 🛠️ Installation
+## Features
+
+### Exception Handling
+- `@RestControllerAdvice` with `GlobalExceptionHandler`.
+- Automatic conversion of `ApiErrorException` exceptions into standardized JSON responses (`BasicResponse` or `CompleteResponse`).
+- Recursive extraction of `HttpStatus` and `ExceptionType`.
+
+### Exception Factory
+- `ApiExceptionFactory` class for fluently and centrally throwing exceptions with different overloads.
+
+### Logging Aspect
+- `@LogOn` annotation to enable automatic method logging.
+- Configuration via `application.properties`.
+- Logs input parameters, return values, and exceptions.
+
+---
+
+## Installation
 
 **1. Add the dependency:**
-If published on Maven Central or Nexus:
+If published to Maven Central or Nexus:
 
 ```xml
 <dependency>
@@ -48,39 +44,152 @@ If published on Maven Central or Nexus:
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-In `application.properties` or `application.yml`:
+In `application.properties` or `application.yml`, you can configure the logger and exception handling behavior:
 
 ```properties
+# Logger Configurations
 logger.enabled=true
 logger.project-name=MyProject
+logger.enable-i18n=true
+logger.sensitive-keys=password,senha,cpf,cnpj,token
+
+# Internationalization (i18n) configurations for log messages
+# Messages are loaded from files like messages.properties, messages_en.properties, messages_pt_BR.properties
+# Example of messages_en.properties:
+# log.entry.message=Entering method {0} with arguments: {1}
+# log.exit.message=Exiting method {0} with result: {1}
+# log.error.message=Error in method {0}: {1} - {2}
 ```
+
+*   `logger.enabled`: Enables or disables aspect logging (default: `true`).
+*   `logger.project-name`: Defines the project name to be displayed in logs.
+*   `logger.enable-i18n`: Enables or disables internationalization of log messages (default: `true`).
+*   `logger.sensitive-keys`: List of keys (comma-separated) that, if found in method arguments, will have their values masked in logs (default: `password,senha,cpf,cnpj,token`).
 
 ---
 
-## 📦 How to Use
+## How to Use
 
-### ✅ 1. Exception Handling
+### 1. Exception Handling
 
-Throw exceptions using the `ApiExceptionFactory`:
+The Aspecta project provides a robust mechanism for exception handling, centered on `ApiExceptionFactory` and `GlobalExceptionHandler`.
+
+#### Throwing Exceptions with `ApiExceptionFactory.troll()`
+
+Use the static method `ApiExceptionFactory.troll()` to throw custom exceptions. It has overloads for different scenarios:
+
+**1. `ApiExceptionFactory.troll(ExceptionType type, String message, Throwable cause)`**
+
+**Usage:** Throws an `ApiErrorException` with a message, an exception type, and a cause (another exception). The default `HttpStatus` will be `INTERNAL_SERVER_ERROR`.
+
+**Code Example:**
 
 ```java
-import static br.com.gbs.aspecta.exception.handler.ApiExceptionFactory.troll;
+import br.com.gbs.aspecta.exception.ExceptionType;
+import br.com.gbs.aspecta.exception.handler.ApiExceptionFactory;
 
-if (user == null) {
-    troll(ExceptionType.BASIC, "User not found", HttpStatus.NOT_FOUND);
+public class ExampleService {
+    public void processData() {
+        try {
+            // Simulates an operation that may fail
+            throw new RuntimeException("Unexpected error during processing.");
+        } catch (RuntimeException e) {
+            // Throws an ApiErrorException encapsulating the original error
+            throw ApiExceptionFactory.troll(ExceptionType.BASIC, "Failed to execute the operation.", e);
+        }
+    }
 }
 ```
 
-The `GlobalExceptionHandler` will automatically intercept and return:
+**Expected Output (HTTP Response - JSON Example):**
 
-* **BasicResponse**: Simple, with `status` and `message`.
-* **CompleteResponse**: Detailed, with `status`, `message`, `details`, `path`, and `timestamp`.
+```json
+{
+  "timestamp": "2025-06-21T10:00:00.000+00:00",
+  "status": 500, 
+  "error": "Internal Server Error",
+  "message": "Failed to execute the operation.",
+  "path": "/api/example-endpoint"
+}
+```
 
-**Example response (JSON):**
+**2. `ApiExceptionFactory.troll(ExceptionType type, String message, HttpStatus status)`**
 
-`ExceptionType.BASIC`:
+**Usage:** Throws an `ApiErrorException` with a message, an exception type, and a custom `HttpStatus`.
+
+**Code Example:**
+
+```java
+import br.com.gbs.aspecta.exception.ExceptionType;
+import br.com.gbs.aspecta.exception.handler.ApiExceptionFactory;
+import org.springframework.http.HttpStatus;
+
+public class ExampleController {
+    public void validateInput(String input) {
+        if (input == null || input.isEmpty()) {
+            // Throws an exception with BAD_REQUEST status
+            throw ApiExceptionFactory.troll(ExceptionType.BASIC, "The 'input' field cannot be empty.", HttpStatus.BAD_REQUEST);
+        }
+        // ... business logic
+    }
+}
+```
+
+**Expected Output (HTTP Response - JSON Example):**
+
+```json
+{
+  "timestamp": "2025-06-21T10:00:00.000+00:00",
+  "status": 400, 
+  "error": "Bad Request",
+  "message": "The 'input' field cannot be empty.",
+  "path": "/api/example-endpoint"
+}
+```
+
+**3. `ApiExceptionFactory.troll(ExceptionType type, String message, HttpStatus status, Throwable cause)`**
+
+**Usage:** Throws an `ApiErrorException` with a message, an exception type, a custom `HttpStatus`, and a cause.
+
+**Code Example:**
+
+```java
+import br.com.gbs.aspecta.exception.ExceptionType;
+import br.com.gbs.aspecta.exception.handler.ApiExceptionFactory;
+import org.springframework.http.HttpStatus;
+
+public class ExampleService {
+    public void accessExternalResource() {
+        try {
+            // Simulates a communication failure with an external service
+            throw new java.io.IOException("Connection refused by external server.");
+        } catch (java.io.IOException e) {
+            // Throws an exception with SERVICE_UNAVAILABLE status and the original cause
+            throw ApiExceptionFactory.troll(ExceptionType.COMPLETE, "Could not connect to data service.", HttpStatus.SERVICE_UNAVAILABLE, e);
+        }
+    }
+}
+```
+
+**Expected Output (HTTP Response - JSON Example):**
+
+```json
+{
+  "timestamp": "2025-06-21T10:00:00.000+00:00",
+  "status": 503, 
+  "error": "Service Unavailable",
+  "message": "Could not connect to data service.",
+  "path": "/api/example-endpoint"
+}
+```
+
+#### Standardized Responses from `GlobalExceptionHandler`
+
+`@RestControllerAdvice` with `GlobalExceptionHandler` automatically intercepts `ApiErrorException` and converts them into standardized JSON responses:
+
+- **BasicResponse**: Returned for `ExceptionType.BASIC`, containing `status` and `message`.
 
 ```json
 {
@@ -89,7 +198,7 @@ The `GlobalExceptionHandler` will automatically intercept and return:
 }
 ```
 
-`ExceptionType.COMPLETE`:
+- **CompleteResponse**: Returned for `ExceptionType.COMPLETE`, containing `status`, `message`, `details`, `path`, and `timestamp`.
 
 ```json
 {
@@ -101,60 +210,79 @@ The `GlobalExceptionHandler` will automatically intercept and return:
 }
 ```
 
----
+### 2. Automatic Logging with `@LogOn`
 
-### ✅ 2. Automatic Logging
+`LoggerAspect` uses the `@LogOn` annotation to enable automatic method logging, recording input, output, and exception information. Sensitive data masking and internationalization are configurable.
 
-Annotate methods with `@LogOn` to enable AOP logging:
+#### `@LogOn` Usage Example
 
 ```java
 import br.com.gbs.aspecta.logger.anotations.LogOn;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
+    @LogOn(sensitiveData = true) // Arguments will be logged and sensitive data masked
+    public String createUser(String name, String email, String password) {
+        // Logic to create the user
+        return "User " + name + " created successfully!";
+    }
+
+    @LogOn(sensitiveData = false) // Arguments will be logged without masking
+    public String findUser(Long id) {
+        // Logic to find the user
+        return "User found: " + id;
+    }
+
     @LogOn
-    public User findUser(Long id) {
-        return repository.findById(id)
-                         .orElseThrow(() -> troll(ExceptionType.BASIC, "User not found", HttpStatus.NOT_FOUND));
+    public void methodThatCanFail() {
+        throw new IllegalStateException("Simulated error in method.");
     }
 }
 ```
 
-**Example generated log:**
+#### Log Output Examples
+
+Log outputs are formatted according to the configurations in `application.properties` and internationalization files.
+
+**Method Entry Log (`createUser` with `sensitiveData = true`):**
 
 ```text
-[MyProject][UserService] Method: findUser() called | Args: [1]
-[MyProject][UserService] Method: findUser() returned | Return: User{id=1, name='John'}
+[MyProject][UserService] Entering method createUser with arguments: [name=John, email=j***@example.com, password=********]
 ```
 
-In case of an error:
+**Method Exit Log (`createUser` successful):**
 
 ```text
-[MyProject][UserService] Method: findUser() threw exception | Message: User not found
+[MyProject][UserService] Exiting method createUser with result: User John created successfully!
+```
+
+**Method Error Log (`methodThatCanFail`):**
+
+```text
+[MyProject][UserService] Error in method methodThatCanFail: IllegalStateException - Simulated error in method.
 ```
 
 ---
 
-## ✅ Internal Components
+## Internal Components
 
-### 📁 Exception
+### Exception
 
-* `ApiErrorException`: Default exception.
-* `ApiExceptionFactory`: Factory to throw exceptions (`troll`).
-* `GlobalExceptionHandler`: Global handler for response formatting and exception handling.
+- `ApiErrorException`: Standard library exception.
+- `ApiExceptionFactory`: Factory for throwing exceptions (`troll`) in a centralized manner.
+- `GlobalExceptionHandler`: Global handler (`@RestControllerAdvice`) for handling and formatting error responses.
 
----
+### Logger
 
-### 📁 Logger
-
-* `@LogOn`: Annotation to mark methods to be logged.
-* `LoggerAspect`: AOP aspect that intercepts methods.
-* `LoggerProperties`: Configuration via `application.properties`.
+- `@LogOn`: Annotation to mark methods that should be logged.
+- `LoggerAspect`: AOP Aspect that intercepts methods annotated with `@LogOn`.
+- `LoggerProperties`: Configuration class that maps `application.properties` properties to the logger.
 
 ---
 
-## 📝 Complete Example
+## Complete Example (Controller)
 
 ```java
 @RestController
@@ -163,66 +291,80 @@ public class UserController {
 
     private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping("/{id}")
     @LogOn
     public User findUser(@PathVariable Long id) {
         return userService.findUser(id);
+    }
+
+    @PostMapping
+    @LogOn(sensitiveData = true)
+    public String createUser(@RequestBody User user) {
+        return userService.createUser(user.getName(), user.getEmail(), user.getPassword());
     }
 }
 ```
 
 ---
 
-## 🚨 Error Handling
+## Error Handling (Response Types)
 
-| ExceptionType | Response                                      |
-| ------------- | --------------------------------------------- |
-| BASIC         | status + message                              |
-| COMPLETE      | status + message + details + path + timestamp |
-
----
-
-## ✅ Advantages
-
-✅ Centralized error handling.
-✅ Standardized API responses.
-✅ Reduction of repetitive code.
-✅ Automatic, configurable logging.
+| ExceptionType | Response            | Included Fields                                  |
+|---------------|---------------------|---------------------------------------------------|
+| `BASIC`       | `BasicResponse`     | `status`, `message`                               |
+| `COMPLETE`    | `CompleteResponse`  | `status`, `message`, `details`, `path`, `timestamp` |
 
 ---
 
-## ❗ Important
+## Advantages
 
-* `GlobalExceptionHandler` only catches **`ApiErrorException`**.
-* To catch other exceptions, create new methods with `@ExceptionHandler`.
-* Logging is **configurable** via `application.properties`.
-
----
-
-## ✅ Roadmap (suggested improvements)
-
-* [x] Support for Spring 6’s `ProblemDetail`.
-* [ ] Publish to Maven Central.
-* [x] Support asynchronous logging.
-* [x] Internationalized error messages (i18n).
-* [x] Removal of sensitive data from logs.
+- Centralized error handling.
+- Standardized API responses.
+- Reduced boilerplate code.
+- Automatic, configurable, and internationalized logging.
+- Sensitive data masking in logs.
 
 ---
 
-## 🤝 Contributions
+## Important
 
-Pull requests are welcome!
+- The `GlobalExceptionHandler` captures `ApiErrorException` and `MethodArgumentNotValidException`.
 
----
-
-## 🛡️ License
-
-[MIT](LICENSE)
+- Logging is **highly configurable** via `application.properties` or `application.yml`.
 
 ---
 
-## 📞 Contact
+## Roadmap
 
-* Author: Guilherme Boscolo de Souza
-* Email: [boscolo.dev@gmail.com](mailto:boscolo.dev@gmail.com)
-* LinkedIn: [https://www.linkedin.com/in/guilherme-boscolo/](https://www.linkedin.com/in/guilherme-boscolo/)
+- [x] Support for Spring 6 `ProblemDetail`.
+- [x] Support for asynchronous logs.
+- [x] Internationalized error messages (i18n).
+- [x] Sensitive data removal from logs.
+- [x] Parameterized sensitive data removal.
+- [ ] Export to Maven Central.
+
+---
+
+## Contributions
+
+Pull Requests are welcome! To contribute, please follow the code guidelines and submit your PRs for review.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+## Contact
+
+- Author: Guilherme Boscolo de Souza
+- Email: boscolo.dev@gmail.com
+- Linkedin: https://www.linkedin.com/in/guilherme-boscolo/
+
+

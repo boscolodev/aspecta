@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @ConfigurationProperties(prefix = "logger")
 @Getter
@@ -13,4 +15,5 @@ public class LoggerProperties {
     private boolean enabled = true;
     private boolean enableI18n = true;
     private String projectName;
+    private List<String> sensitiveKeys = List.of("password", "senha", "cpf", "cnpj", "token");
 }
