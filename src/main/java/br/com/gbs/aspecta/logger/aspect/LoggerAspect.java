@@ -3,11 +3,7 @@ package br.com.gbs.aspecta.logger.aspect;
 import br.com.gbs.aspecta.logger.anotations.LogOn;
 import br.com.gbs.aspecta.logger.configurations.LoggerProperties;
 import br.com.gbs.aspecta.logger.interfaces.AsyncLogger;
-import br.com.gbs.aspecta.logger.interfaces.I18nLogger;
-import br.com.gbs.aspecta.logger.interfaces.MessageProvider;
 import br.com.gbs.aspecta.logger.providers.DelegatingMessageProvider;
-import br.com.gbs.aspecta.logger.service.I18NLoggerService;
-import br.com.gbs.aspecta.logger.service.AsyncLoggerService;
 import br.com.gbs.aspecta.logger.utils.SensitiveDataMasker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,17 +13,18 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-import java.util.Locale;
-
-@RequiredArgsConstructor
-@Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class LoggerAspect {
+
+    private static final String LOG_TEMPLATE = "[{}][{}] {}";
 
     private final LoggerProperties loggerProperties;
     private final AsyncLogger asyncLoggerService;
     private final DelegatingMessageProvider messageProvider;
+    private final SensitiveDataMasker masker;
 
     @Around("@annotation(logOn)")
     public Object logAnnotatedMethods(ProceedingJoinPoint joinPoint, LogOn logOn) throws Throwable {
@@ -38,20 +35,21 @@ public class LoggerAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String className = targetClass.getSimpleName();
         String methodName = signature.getName();
-        String argsSanitized = SensitiveDataMasker.sanitizeArgs(joinPoint.getArgs());
 
-        asyncLoggerService.logInfo("[{}][{}] {}", projectName, className,
+        String argsSanitized = masker.sanitizeArgs(joinPoint.getArgs(), logOn.sensitiveData());
+
+        asyncLoggerService.logInfo(LOG_TEMPLATE, projectName, className,
                 messageProvider.entryMessage(methodName, argsSanitized));
 
         try {
             Object result = joinPoint.proceed();
 
-            asyncLoggerService.logInfo("[{}][{}] {}", projectName, className,
+            asyncLoggerService.logInfo(LOG_TEMPLATE, projectName, className,
                     messageProvider.exitMessage(methodName, result));
 
             return result;
         } catch (Throwable ex) {
-            asyncLoggerService.logError("[{}][{}] {}", projectName, className,
+            asyncLoggerService.logError(LOG_TEMPLATE, projectName, className,
                     messageProvider.errorMessage(methodName, ex.getClass().getSimpleName(), ex.getMessage()));
             throw ex;
         }
