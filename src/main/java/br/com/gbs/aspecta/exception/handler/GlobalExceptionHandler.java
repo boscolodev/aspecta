@@ -30,8 +30,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    private static final int MAX_CAUSE_DEPTH = 10;
-
     private final MessageSource messageSource;
     private final LoggerProperties loggerProperties;
 
@@ -140,27 +138,12 @@ public class GlobalExceptionHandler {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private HttpStatus extractStatus(Throwable ex) {
-        int depth = 0;
-        Throwable current = ex;
-        while (current != null && depth < MAX_CAUSE_DEPTH) {
-            if (current instanceof ApiErrorException apiEx && apiEx.getStatus() != null) {
-                return apiEx.getStatus();
-            }
-            current = current.getCause();
-            depth++;
-        }
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+    private HttpStatus extractStatus(ApiErrorException ex) {
+        return ex.getStatus();
     }
 
     private ExceptionType determineExceptionType(ApiErrorException ex) {
-        if (ex.getType() != null) {
-            return ex.getType();
-        }
-        if (ex.getCause() instanceof ApiErrorException cause && cause.getType() != null) {
-            return cause.getType();
-        }
-        return ExceptionType.BASIC;
+        return ex.getType();
     }
 
     private String resolveExceptionMessage(ApiErrorException ex, HttpServletRequest request) {

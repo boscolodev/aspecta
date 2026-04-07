@@ -48,6 +48,7 @@ class LoggerAspectIntegrationTest {
         appender.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         appender.start();
         asyncLogger.addAppender(appender);
+        loggerAspectLogger.addAppender(appender);
 
         loggerProperties.setEnabled(true);
         loggerProperties.setStructuredOutput(false);
@@ -57,6 +58,7 @@ class LoggerAspectIntegrationTest {
     @AfterEach
     void detachAppender() {
         appender.detachFrom(asyncLogger);
+        appender.detachFrom(loggerAspectLogger);
         loggerAspectLogger.setLevel(null);
         MDC.clear();
     }
@@ -170,6 +172,36 @@ class LoggerAspectIntegrationTest {
         assertThat(appender.containsMessage("skipped")).isFalse();
     }
 
+    @Test
+    @DisplayName("Quando logStackTrace ativado deve registrar stack trace ao lançar exceção")
+    void whenLogStackTraceEnabledShouldLogStackTrace() throws InterruptedException {
+        assertThatThrownBy(() -> testService.throwWithStackTrace()).isInstanceOf(RuntimeException.class);
+        waitForAsync();
+        assertThat(appender.contains("Stack trace:", Level.INFO)).isTrue();
+    }
+
+    @Test
+    @DisplayName("Quando structured output e nível DEBUG deve emitir JSON via dispatchRaw em DEBUG")
+    void whenStructuredOutputAndDebugLevelShouldDispatchRawDebug() throws InterruptedException {
+        loggerProperties.setStructuredOutput(true);
+        testService.debugMethod("val");
+        waitForAsync();
+        assertThat(appender.getEvents()).anyMatch(e ->
+                e.getFormattedMessage().startsWith("{\"event\":") && e.getLevel() == Level.DEBUG);
+        loggerProperties.setStructuredOutput(false);
+    }
+
+    @Test
+    @DisplayName("Quando structured output e nível WARN deve emitir JSON via dispatchRaw em WARN")
+    void whenStructuredOutputAndWarnLevelShouldDispatchRawWarn() throws InterruptedException {
+        loggerProperties.setStructuredOutput(true);
+        testService.warnMethod("val");
+        waitForAsync();
+        assertThat(appender.getEvents()).anyMatch(e ->
+                e.getFormattedMessage().startsWith("{\"event\":") && e.getLevel() == Level.WARN);
+        loggerProperties.setStructuredOutput(false);
+    }
+
     private void waitForAsync() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(300);
     }
@@ -206,5 +238,10 @@ class LoggerAspectIntegrationTest {
 
         @LogSkip
         public void skippedMethod() {}
+
+        @LogOn(logStackTrace = true)
+        public void throwWithStackTrace() {
+            throw new RuntimeException("test-stack-trace");
+        }
     }
 }
