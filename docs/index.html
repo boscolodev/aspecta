@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspecta — Documentação</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #232636;
+      --border: #2e3248;
+      --accent: #6c63ff;
+      --accent2: #00d4aa;
+      --accent3: #ff6b6b;
+      --accent4: #ffd166;
+      --text: #e8eaf0;
+      --muted: #8b8fa8;
+      --code-bg: #12141e;
+      --tag-bg: #252840;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 0 24px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sidebar-logo span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .sidebar nav { padding: 16px 0; }
+
+    .nav-group { margin-bottom: 8px; }
+
+    .nav-group-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 8px 24px 4px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 7px 24px;
+      font-size: 0.875rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: var(--text);
+      border-left-color: var(--accent);
+      background: rgba(108, 99, 255, 0.07);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #13162a 0%, #1a1d27 50%, #0f1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 60px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(108,99,255,0.15);
+      border: 1px solid rgba(108,99,255,0.3);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 28px;
+    }
+
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .tag.green { color: var(--accent2); border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.08); }
+    .tag.purple { color: var(--accent); border-color: rgba(108,99,255,0.3); background: rgba(108,99,255,0.08); }
+    .tag.yellow { color: var(--accent4); border-color: rgba(255,209,102,0.3); background: rgba(255,209,102,0.08); }
+    .tag.red { color: var(--accent3); border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.08); }
+
+    /* ── CONTENT ── */
+    .content { padding: 48px 60px; max-width: 1100px; }
+
+    section { margin-bottom: 64px; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .section-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .icon-purple { background: rgba(108,99,255,0.15); }
+    .icon-green  { background: rgba(0,212,170,0.15); }
+    .icon-yellow { background: rgba(255,209,102,0.15); }
+    .icon-red    { background: rgba(255,107,107,0.15); }
+    .icon-blue   { background: rgba(56,189,248,0.15); }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    p { color: var(--muted); font-size: 0.92rem; margin-bottom: 12px; }
+
+    /* ── CARDS ── */
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: var(--accent); }
+
+    .card-icon {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+    .card p { font-size: 0.83rem; margin-bottom: 0; }
+
+    /* ── CODE BLOCKS ── */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-lang {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .code-dots { display: flex; gap: 6px; }
+    .code-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red    { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green  { background: #28c840; }
+
+    pre {
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.82rem;
+      line-height: 1.65;
+    }
+
+    /* syntax highlight */
+    .kw   { color: #c792ea; }
+    .cls  { color: #82aaff; }
+    .str  { color: #c3e88d; }
+    .cmt  { color: #546e7a; font-style: italic; }
+    .ann  { color: #ffcb6b; }
+    .num  { color: #f78c6c; }
+    .op   { color: #89ddff; }
+
+    /* ── PROPERTIES TABLE ── */
+    .prop-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 16px 0;
+    }
+
+    .prop-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .prop-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      vertical-align: top;
+    }
+
+    .prop-table tr:last-child td { border-bottom: none; }
+    .prop-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .prop-name { color: var(--accent2); font-family: monospace; font-size: 0.82rem; }
+    .prop-type { color: var(--accent4); font-family: monospace; font-size: 0.78rem; }
+    .prop-default { color: var(--accent); font-family: monospace; font-size: 0.78rem; }
+
+    /* ── IMPROVEMENTS ── */
+    .improvement-list { list-style: none; display: grid; gap: 14px; }
+
+    .improvement-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+
+    .improvement-item:hover { border-color: var(--accent2); }
+
+    .imp-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .badge-log  { background: rgba(56,189,248,0.15); color: #38bdf8; }
+    .badge-out  { background: rgba(0,212,170,0.15);  color: var(--accent2); }
+    .badge-feat { background: rgba(108,99,255,0.15); color: var(--accent); }
+    .badge-perf { background: rgba(255,209,102,0.15); color: var(--accent4); }
+    .badge-sec  { background: rgba(255,107,107,0.15); color: var(--accent3); }
+
+    .imp-content h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .imp-content p  { font-size: 0.82rem; margin-bottom: 8px; }
+
+    /* ── FLOW DIAGRAM ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .flow-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      color: var(--text);
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .flow-arrow {
+      color: var(--accent);
+      font-size: 1.2rem;
+      padding: 0 6px;
+    }
+
+    /* ── RESPONSE SAMPLES ── */
+    .response-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .response-card {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .response-card-header {
+      padding: 10px 16px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot-400 { background: var(--accent4); }
+    .dot-404 { background: var(--accent3); }
+    .dot-500 { background: #ff4f4f; }
+    .dot-200 { background: var(--accent2); }
+
+    .response-card pre { padding: 14px 16px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 60px;
+      margin-left: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+    }
+
+    footer p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── INLINE CODE ── */
+    code {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.82rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--accent2);
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main, footer { margin-left: 0; }
+      .hero, .content { padding: 32px 24px; }
+      .hero h1 { font-size: 2rem; }
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    .notice {
+      border-left: 3px solid var(--accent2);
+      background: rgba(0,212,170,0.06);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 16px 0;
+    }
+
+    .notice strong { color: var(--accent2); }
+
+    .warn-notice {
+      border-left-color: var(--accent4);
+      background: rgba(255,209,102,0.06);
+    }
+    .warn-notice strong { color: var(--accent4); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>aspecta</h1>
+    <span>v1.0.0 · Spring Boot 3.x · Java 21</span>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Início</div>
+      <a href="#overview" class="active">Visão Geral</a>
+      <a href="#install">Instalação</a>
+      <a href="#config">Configuração</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Exceções</div>
+      <a href="#exception-types">Tipos de Resposta</a>
+      <a href="#exception-factory">ApiExceptionFactory</a>
+      <a href="#global-handler">Global Handler</a>
+      <a href="#response-dtos">Response DTOs</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Logging</div>
+      <a href="#logon">Anotação @LogOn</a>
+      <a href="#logger-aspect">LoggerAspect</a>
+      <a href="#sensitive">Mascaramento</a>
+      <a href="#async">Logging Assíncrono</a>
+      <a href="#i18n">Internacionalização</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Implementado</div>
+      <a href="#improvements-log">Melhorias de Logs</a>
+      <a href="#improvements-out">Melhorias de Saídas</a>
+      <a href="#improvements-feat">Funcionalidades</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Segurança</div>
+      <a href="#sec-overview">Visão Geral</a>
+      <a href="#sec-critical">Críticas</a>
+      <a href="#sec-high">Altas</a>
+      <a href="#sec-medium">Médias</a>
+      <a href="#sec-improvements">Avisos de Operação</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Roadmap</div>
+      <a href="#sec-roadmap">Funcionalidades Implementadas</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">⚡ Open Source · MIT</div>
+    <h1>aspecta</h1>
+    <p>Biblioteca Spring Boot para tratamento centralizado de exceções e logging AOP automático com suporte a i18n, mascaramento de dados sensíveis e processamento assíncrono.</p>
+    <div class="hero-tags">
+      <span class="tag purple">Spring Boot 3.1+</span>
+      <span class="tag green">Java 21</span>
+      <span class="tag yellow">AOP / AspectJ</span>
+      <span class="tag">io.github.boscolodev</span>
+      <span class="tag green">Async Logging</span>
+      <span class="tag purple">i18n</span>
+      <span class="tag red">Sensitive Data Masking</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <section id="overview">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🎯</div>
+        <h2>Visão Geral</h2>
+      </div>
+      <p>Aspecta elimina boilerplate nos seus projetos Spring Boot, entregando dois pilares:</p>
+
+      <div class="grid grid-2" style="margin-top:20px">
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <h3>Tratamento de Exceções</h3>
+          <p>Handler global <code>@RestControllerAdvice</code> com respostas padronizadas (BASIC e COMPLETE), fábrica de exceções e suporte a Bean Validation.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📝</div>
+          <h3>Logging AOP Automático</h3>
+          <p>Anote qualquer método com <code>@LogOn</code> e obtenha entrada, saída e erros registrados automaticamente, com mascaramento de dados sensíveis.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌍</div>
+          <h3>Internacionalização</h3>
+          <p>Mensagens de log em Português (pt-BR) e Inglês (en) com fallback automático. Configurável via <code>messages.properties</code>.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Assíncrono por Padrão</h3>
+          <p>Logs executados em thread separada via Spring <code>@Async</code>, garantindo que o fluxo principal não seja bloqueado.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ INSTALL ═══ -->
+    <section id="install">
+      <div class="section-header">
+        <div class="section-icon icon-green">📦</div>
+        <h2>Instalação</h2>
+      </div>
+      <p>Adicione a dependência ao seu <code>pom.xml</code>:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Maven · pom.xml</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="op">&lt;</span><span class="cls">dependency</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="cls">groupId</span><span class="op">&gt;</span>io.github.boscolodev<span class="op">&lt;/</span><span class="cls">groupId</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="cls">artifactId</span><span class="op">&gt;</span>aspecta<span class="op">&lt;/</span><span class="cls">artifactId</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="cls">version</span><span class="op">&gt;</span>1.0.0<span class="op">&lt;/</span><span class="cls">version</span><span class="op">&gt;</span>
+<span class="op">&lt;/</span><span class="cls">dependency</span><span class="op">&gt;</span></pre>
+      </div>
+
+      <div class="notice">
+        <strong>Nota:</strong> A publicação no Maven Central está em andamento. Enquanto isso, instale localmente com <code>mvn install</code>.
+      </div>
+    </section>
+
+    <!-- ═══ CONFIG ═══ -->
+    <section id="config">
+      <div class="section-header">
+        <div class="section-icon icon-yellow">⚙️</div>
+        <h2>Configuração</h2>
+      </div>
+      <p>Todas as propriedades são opcionais. O comportamento padrão funciona sem nenhuma configuração.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">YAML · application.yml</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="ann">logger</span><span class="op">:</span>
+  <span class="ann">enabled</span><span class="op">:</span> <span class="kw">true</span>               <span class="cmt"># Liga/desliga todo o logging</span>
+  <span class="ann">enable-i18n</span><span class="op">:</span> <span class="kw">true</span>          <span class="cmt"># Ativa mensagens internacionalizadas</span>
+  <span class="ann">projectName</span><span class="op">:</span> <span class="str">MEU-PROJETO</span>   <span class="cmt"># Aparece no prefixo dos logs</span>
+  <span class="ann">structured-output</span><span class="op">:</span> <span class="kw">false</span>      <span class="cmt"># true → emite JSON indexável (Loki/Datadog)</span>
+  <span class="ann">sensitive-keys</span><span class="op">:</span>             <span class="cmt"># Campos mascarados globalmente (padrão já inclui os abaixo)</span>
+    <span class="op">-</span> <span class="str">password</span>
+    <span class="op">-</span> <span class="str">cpf</span>
+    <span class="op">-</span> <span class="str">token</span>
+    <span class="op">-</span> <span class="str">secret</span>
+    <span class="op">-</span> <span class="str">apikey</span>
+    <span class="op">-</span> <span class="str">accesstoken</span>
+    <span class="op">-</span> <span class="str">refreshtoken</span>
+    <span class="op">-</span> <span class="str">authorization</span>
+    <span class="op">-</span> <span class="str">privatekey</span>
+    <span class="op">-</span> <span class="str">creditcard</span>
+  <span class="ann">expose-exception-details</span><span class="op">:</span> <span class="kw">false</span>  <span class="cmt"># true apenas em dev — nunca em produção</span>
+  <span class="ann">async</span><span class="op">:</span>                       <span class="cmt"># Configuração do executor dedicado</span>
+    <span class="ann">core-pool-size</span><span class="op">:</span> <span class="num">2</span>           <span class="cmt"># min: 1, max: 20</span>
+    <span class="ann">max-pool-size</span><span class="op">:</span> <span class="num">8</span>            <span class="cmt"># min: 1, max: 100</span>
+    <span class="ann">queue-capacity</span><span class="op">:</span> <span class="num">500</span>         <span class="cmt"># min: 1, max: 5000</span></pre>
+      </div>
+
+      <table class="prop-table">
+        <thead>
+          <tr>
+            <th>Propriedade</th>
+            <th>Tipo</th>
+            <th>Padrão</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="prop-name">logger.enabled</td>
+            <td class="prop-type">Boolean</td>
+            <td class="prop-default">true</td>
+            <td>Habilita ou desabilita o logging AOP globalmente</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.enable-i18n</td>
+            <td class="prop-type">Boolean</td>
+            <td class="prop-default">true</td>
+            <td>Usa mensagens do bundle i18n ou o provider padrão</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.projectName</td>
+            <td class="prop-type">String</td>
+            <td class="prop-default">ASPECTA</td>
+            <td>Nome exibido como prefixo em todos os logs</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.sensitive-keys</td>
+            <td class="prop-type">List&lt;String&gt;</td>
+            <td class="prop-default">password, cpf, token, secret, apikey, accesstoken, refreshtoken, authorization, privatekey, creditcard</td>
+            <td>Chaves JSON cujos valores serão substituídos por <code>***</code> (strings e números). Comparação case-insensitive.</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.structured-output</td>
+            <td class="prop-type">Boolean</td>
+            <td class="prop-default">false</td>
+            <td>Quando <code>true</code>, cada log é emitido como JSON com campos <code>event</code>, <code>project</code>, <code>class</code>, <code>method</code>, <code>args</code>/<code>result</code>/<code>exception</code>, <code>durationMs</code> e <code>traceId</code> (se presente no MDC).</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.expose-exception-details</td>
+            <td class="prop-type">Boolean</td>
+            <td class="prop-default">false</td>
+            <td>Quando <code>true</code>, o campo <code>details</code> do <code>CompleteResponse</code> inclui a mensagem do <code>cause</code>. <strong>Habilitar apenas em ambientes não-produção.</strong></td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.async.core-pool-size</td>
+            <td class="prop-type">Integer</td>
+            <td class="prop-default">2</td>
+            <td>Threads base do executor <code>aspectaLoggerExecutor</code>. Limites: 1–20</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.async.max-pool-size</td>
+            <td class="prop-type">Integer</td>
+            <td class="prop-default">8</td>
+            <td>Máximo de threads simultâneos no pool de logging. Limites: 1–100</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logger.async.queue-capacity</td>
+            <td class="prop-type">Integer</td>
+            <td class="prop-default">500</td>
+            <td>Capacidade da fila interna. Ao estourar, aplica <code>CallerRunsPolicy</code>. Limites: 1–5000</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ═══ EXCEPTION TYPES ═══ -->
+    <section id="exception-types">
+      <div class="section-header">
+        <div class="section-icon icon-red">🔥</div>
+        <h2>Tipos de Resposta — ExceptionType</h2>
+      </div>
+      <p>O enum <code>ExceptionType</code> define o formato da resposta retornada ao cliente quando uma exceção é lançada.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>BASIC</h3>
+          <p>Resposta mínima com status e mensagem. Ideal para erros simples onde não há necessidade de expor detalhes internos.</p>
+          <div class="code-block" style="margin-top:12px">
+            <div class="code-header"><span class="code-lang">JSON</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+            <pre><span class="op">{</span>
+  <span class="str">"status"</span><span class="op">:</span> <span class="str">"404"</span><span class="op">,</span>
+  <span class="str">"message"</span><span class="op">:</span> <span class="str">"Usuário não encontrado"</span>
+<span class="op">}</span></pre>
+          </div>
+        </div>
+        <div class="card">
+          <h3>COMPLETE</h3>
+          <p>Resposta completa com detalhes, path e timestamp. Recomendado para ambientes de desenvolvimento e erros que precisam de rastreabilidade.</p>
+          <div class="code-block" style="margin-top:12px">
+            <div class="code-header"><span class="code-lang">JSON</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+            <pre><span class="op">{</span>
+  <span class="str">"status"</span><span class="op">:</span> <span class="str">"500"</span><span class="op">,</span>
+  <span class="str">"message"</span><span class="op">:</span> <span class="str">"Erro interno"</span><span class="op">,</span>
+  <span class="str">"details"</span><span class="op">:</span> <span class="str">"NullPointerException"</span><span class="op">,</span>
+  <span class="str">"path"</span><span class="op">:</span> <span class="str">"/api/user"</span><span class="op">,</span>
+  <span class="str">"timestamp"</span><span class="op">:</span> <span class="str">"2025-05-30T12:34:56"</span>
+<span class="op">}</span></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ EXCEPTION FACTORY ═══ -->
+    <section id="exception-factory">
+      <div class="section-header">
+        <div class="section-icon icon-red">🏭</div>
+        <h2>ApiExceptionFactory</h2>
+      </div>
+      <p>Classe utilitária com método estático <code>troll()</code> para lançar exceções padronizadas de forma fluente.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="cmt">// Lança com status 500 (padrão) e causa raiz</span>
+<span class="kw">throw</span> <span class="cls">ApiExceptionFactory</span><span class="op">.</span>troll(
+    <span class="cls">ExceptionType</span><span class="op">.</span>BASIC,
+    <span class="str">"Falha na operação."</span>,
+    exception
+);
+
+<span class="cmt">// Lança com HTTP status personalizado</span>
+<span class="kw">throw</span> <span class="cls">ApiExceptionFactory</span><span class="op">.</span>troll(
+    <span class="cls">ExceptionType</span><span class="op">.</span>BASIC,
+    <span class="str">"Entrada inválida."</span>,
+    <span class="cls">HttpStatus</span><span class="op">.</span>BAD_REQUEST
+);
+
+<span class="cmt">// Lança com status, causa e resposta completa</span>
+<span class="kw">throw</span> <span class="cls">ApiExceptionFactory</span><span class="op">.</span>troll(
+    <span class="cls">ExceptionType</span><span class="op">.</span>COMPLETE,
+    <span class="str">"Serviço indisponível."</span>,
+    <span class="cls">HttpStatus</span><span class="op">.</span>SERVICE_UNAVAILABLE,
+    exception
+);</pre>
+      </div>
+
+      <table class="prop-table">
+        <thead>
+          <tr><th>Sobrecarga</th><th>Status padrão</th><th>Inclui causa</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>troll(type, message, cause)</code></td>
+            <td class="prop-default">500 Internal Error</td>
+            <td class="tag green" style="display:inline-block">Sim</td>
+          </tr>
+          <tr>
+            <td><code>troll(type, message, status)</code></td>
+            <td class="prop-default">Personalizado</td>
+            <td class="tag red" style="display:inline-block">Não</td>
+          </tr>
+          <tr>
+            <td><code>troll(type, message, status, cause)</code></td>
+            <td class="prop-default">Personalizado</td>
+            <td class="tag green" style="display:inline-block">Sim</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══ GLOBAL HANDLER ═══ -->
+    <section id="global-handler">
+      <div class="section-header">
+        <div class="section-icon icon-red">🌐</div>
+        <h2>Global Exception Handler</h2>
+      </div>
+      <p>O <code>GlobalExceptionHandler</code> é um <code>@RestControllerAdvice</code> que intercepta automaticamente exceções da aplicação.</p>
+
+      <div class="flow">
+        <div class="flow-step">Exceção lançada</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">GlobalExceptionHandler</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Extrai status + tipo</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Serializa DTO</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Resposta HTTP</div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card">
+          <h3>handleApiErrorException</h3>
+          <p>Intercepta <code>ApiErrorException</code> e converte para <code>BasicResponse</code> ou <code>CompleteResponse</code> conforme o <code>ExceptionType</code>.</p>
+          <p>Processa a cadeia de causas recursivamente para extrair status HTTP correto.</p>
+        </div>
+        <div class="card">
+          <h3>handleValidationException</h3>
+          <p>Intercepta <code>MethodArgumentNotValidException</code> (falhas de <code>@Valid</code>) e retorna lista de campos inválidos com mensagens.</p>
+        </div>
+      </div>
+
+      <div class="response-grid" style="margin-top:20px">
+        <div class="response-card">
+          <div class="response-card-header">
+            <span class="status-dot dot-400"></span>
+            <span>400 — Validation Error</span>
+          </div>
+          <pre><span class="op">{</span>
+  <span class="str">"status"</span><span class="op">:</span> <span class="str">"400"</span><span class="op">,</span>
+  <span class="str">"message"</span><span class="op">:</span> <span class="str">"Erro de validação"</span><span class="op">,</span>
+  <span class="str">"details"</span><span class="op">:</span> <span class="op">[</span>
+    <span class="op">{</span>
+      <span class="str">"fieldName"</span><span class="op">:</span> <span class="str">"email"</span><span class="op">,</span>
+      <span class="str">"message"</span><span class="op">:</span> <span class="str">"must be valid"</span>
+    <span class="op">}</span>
+  <span class="op">]</span>
+<span class="op">}</span></pre>
+        </div>
+        <div class="response-card">
+          <div class="response-card-header">
+            <span class="status-dot dot-404"></span>
+            <span>404 — Not Found (BASIC)</span>
+          </div>
+          <pre><span class="op">{</span>
+  <span class="str">"status"</span><span class="op">:</span> <span class="str">"404"</span><span class="op">,</span>
+  <span class="str">"message"</span><span class="op">:</span> <span class="str">"Usuário não encontrado"</span>
+<span class="op">}</span></pre>
+        </div>
+        <div class="response-card">
+          <div class="response-card-header">
+            <span class="status-dot dot-500"></span>
+            <span>500 — Internal (COMPLETE)</span>
+          </div>
+          <pre><span class="op">{</span>
+  <span class="str">"status"</span><span class="op">:</span> <span class="str">"500"</span><span class="op">,</span>
+  <span class="str">"message"</span><span class="op">:</span> <span class="str">"Erro interno"</span><span class="op">,</span>
+  <span class="str">"details"</span><span class="op">:</span> <span class="str">"NullPointerException"</span><span class="op">,</span>
+  <span class="str">"path"</span><span class="op">:</span> <span class="str">"/api/user"</span><span class="op">,</span>
+  <span class="str">"timestamp"</span><span class="op">:</span> <span class="str">"2025-05-30T12:34:56"</span>
+<span class="op">}</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ RESPONSE DTOS ═══ -->
+    <section id="response-dtos">
+      <div class="section-header">
+        <div class="section-icon icon-red">📄</div>
+        <h2>Response DTOs</h2>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>BasicResponse</h3>
+          <p>Campos: <code>status</code>, <code>message</code></p>
+          <p>Usado por <code>ExceptionType.BASIC</code>. Resposta mínima sem dados de diagnóstico.</p>
+        </div>
+        <div class="card">
+          <h3>CompleteResponse</h3>
+          <p>Campos: <code>status</code>, <code>message</code>, <code>details</code>, <code>path</code>, <code>timestamp</code></p>
+          <p>Usado por <code>ExceptionType.COMPLETE</code>. Inclui rastreabilidade completa.</p>
+        </div>
+        <div class="card">
+          <h3>FieldMessage</h3>
+          <p>Campos: <code>fieldName</code>, <code>message</code>, <code>details</code></p>
+          <p>Estende <code>BasicResponse</code>. Cada item representa um campo inválido na validação.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ═══ @LogOn ═══ -->
+    <section id="logon">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🏷️</div>
+        <h2>Anotação @LogOn</h2>
+      </div>
+      <p>Marque qualquer método Spring com <code>@LogOn</code> para ativar o logging automático via AOP.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> <span class="op">{</span>
+
+    <span class="cmt">// Mascara campos sensíveis (padrão)</span>
+    <span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">true</span>)
+    <span class="kw">public</span> <span class="cls">User</span> createUser(<span class="cls">String</span> name, <span class="cls">String</span> email, <span class="cls">String</span> password) <span class="op">{</span>
+        <span class="kw">return</span> userRepository.save(<span class="kw">new</span> <span class="cls">User</span>(name, email, password));
+    <span class="op">}</span>
+
+    <span class="cmt">// Sem mascaramento — dados públicos</span>
+    <span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">false</span>)
+    <span class="kw">public</span> <span class="cls">User</span> findUser(<span class="cls">Long</span> id) <span class="op">{</span>
+        <span class="kw">return</span> userRepository.findById(id).orElseThrow();
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/user"</span>)
+<span class="kw">public class</span> <span class="cls">UserController</span> <span class="op">{</span>
+
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="ann">@LogOn</span> <span class="cmt">// sensitiveData = true por padrão</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">User</span>&gt; findUser(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) <span class="op">{</span>
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.ok(userService.findUser(id));
+    <span class="op">}</span>
+<span class="op">}</span></pre>
+      </div>
+
+      <table class="prop-table">
+        <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Padrão</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="prop-name">sensitiveData</td>
+            <td class="prop-type">boolean</td>
+            <td class="prop-default">true</td>
+            <td>Se <code>true</code>, aplica mascaramento nas chaves configuradas em <code>logger.sensitive-keys</code></td>
+          </tr>
+          <tr>
+            <td class="prop-name">level</td>
+            <td class="prop-type">LogLevel</td>
+            <td class="prop-default">INFO</td>
+            <td>Nível de log (DEBUG, INFO, WARN). Se o nível estiver desativado no framework de logging, nenhuma serialização ocorre</td>
+          </tr>
+          <tr>
+            <td class="prop-name">logStackTrace</td>
+            <td class="prop-type">boolean</td>
+            <td class="prop-default">false</td>
+            <td>Se <code>true</code>, loga o stack trace completo quando o método lança uma exceção</td>
+          </tr>
+          <tr>
+            <td class="prop-name">excludeFromMask</td>
+            <td class="prop-type">String[]</td>
+            <td class="prop-default">{}</td>
+            <td>Campos que <strong>não</strong> serão mascarados neste método, mesmo que estejam em <code>logger.sensitive-keys</code>. Útil para exibir dados específicos em métodos de diagnóstico</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══ LOGGER ASPECT ═══ -->
+    <section id="logger-aspect">
+      <div class="section-header">
+        <div class="section-icon icon-purple">🔄</div>
+        <h2>LoggerAspect — Fluxo Interno</h2>
+      </div>
+      <p>O <code>LoggerAspect</code> usa <code>@Around</code> para envolver qualquer método anotado com <code>@LogOn</code>.</p>
+
+      <div class="flow">
+        <div class="flow-step">@LogOn detectado</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Extrai args + contexto</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Sanitiza dados</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">logInfo (entry)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Executa método</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">logInfo (exit) ou logError</div>
+      </div>
+
+      <div class="code-block" style="margin-top:16px">
+        <div class="code-header">
+          <span class="code-lang">Saída de Log — Exemplo</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="cmt"># Entrada</span>
+<span class="str">[MEU-PROJETO][UserService] Entering method: createUser() with | Args: [name=John, password=***]</span>
+
+<span class="cmt"># Saída</span>
+<span class="str">[MEU-PROJETO][UserService] Exiting method: createUser() returned | Return: User{id=1, name=John}</span>
+
+<span class="cmt"># Erro</span>
+<span class="str">[MEU-PROJETO][UserService] Error in method createUser: IllegalStateException - Simulated error.</span></pre>
+      </div>
+
+      <p>O template padrão é <code>[{projectName}][{className}] {message}</code>.</p>
+    </section>
+
+    <!-- ═══ SENSITIVE DATA ═══ -->
+    <section id="sensitive">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🔐</div>
+        <h2>Mascaramento de Dados Sensíveis</h2>
+      </div>
+      <p>O <code>SensitiveDataMasker</code> usa regex case-insensitive para substituir valores de campos sensíveis por <code>***</code>, cobrindo tanto strings quanto valores numéricos JSON. O mascaramento é aplicado nos <strong>argumentos de entrada e no valor de retorno</strong>.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Strings e números — ambos mascarados</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="cmt">// Input: { "name": "João", "password": "abc123", "cpf": 12345678900 }</span>
+<span class="cmt">// Log:   { "name": "João", "password": "***",   "cpf": "***" }</span></pre>
+      </div>
+
+      <div class="notice">
+        <strong>Padrões regex (por chave):</strong><br>
+        Strings: <code>(?i)("key"\s*:\s*")[^"]*"</code><br>
+        Números: <code>(?i)("key"\s*:\s*)(-?\d+(?:\.\d+)?)</code><br>
+        As chaves são escapadas com <code>Pattern.quote()</code> para prevenir injeção de regex / ReDoS.
+      </div>
+
+      <h3 style="margin-top:20px">excludeFromMask — exibir campos específicos</h3>
+      <p>Use <code>excludeFromMask</code> no <code>@LogOn</code> para exibir determinados campos mesmo que estejam em <code>logger.sensitive-keys</code>. Útil para métodos de diagnóstico ou auditoria controlada.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Java — exemplo</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="cmt">// Classe: @LogOn(sensitiveData = true) — mascara tudo</span>
+<span class="ann">@Service</span>
+<span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cls">AuditService</span> <span class="op">{</span>
+
+    <span class="cmt">// Método de diagnóstico: mostra email, mascara password/cpf/token</span>
+    <span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">true</span>, excludeFromMask <span class="op">=</span> <span class="op">{</span><span class="str">"email"</span><span class="op">})</span>
+    <span class="kw">public void</span> auditLogin(<span class="cls">String</span> email, <span class="cls">String</span> password) <span class="op">{</span> <span class="op">...</span> <span class="op">}</span>
+
+    <span class="cmt">// Método normal: mascara tudo (herda da classe)</span>
+    <span class="kw">public void</span> createUser(<span class="cls">String</span> email, <span class="cls">String</span> password, <span class="cls">String</span> cpf) <span class="op">{</span> <span class="op">...</span> <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="cmt">// Log de auditLogin: email=joao@ex.com, password=***</span>
+<span class="cmt">// Log de createUser: email=***, password=***, cpf=***</span></pre>
+      </div>
+
+      <p>Chaves sensíveis padrão: <code>password</code>, <code>cpf</code>, <code>token</code>, <code>secret</code>, <code>apikey</code>, <code>accesstoken</code>, <code>refreshtoken</code>, <code>authorization</code>, <code>privatekey</code>, <code>creditcard</code>. Extensível via <code>logger.sensitive-keys</code>. O mascaramento cobre JSON (<code>"key":"value"</code>), texto plano (<code>key=value</code>, <code>key: value</code>) e padrões customizados via <code>MaskingStrategy</code>.</p>
+    </section>
+
+    <!-- ═══ ASYNC ═══ -->
+    <section id="async">
+      <div class="section-header">
+        <div class="section-icon icon-green">⚡</div>
+        <h2>Logging Assíncrono</h2>
+      </div>
+      <p>Todo o logging é delegado ao <code>AsyncLoggerService</code>, que usa <code>@Async("aspectaLoggerExecutor")</code> em um executor <strong>dedicado e nomeado</strong>, sem interferir no executor <code>@Async</code> da aplicação consumidora.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>AsyncLogger interface</h3>
+          <p>Quatro métodos: <code>logDebug</code>, <code>logInfo</code>, <code>logWarn</code>, <code>logError</code> — cada um delegado ao nível SLF4J correspondente.</p>
+        </div>
+        <div class="card">
+          <h3>aspectaLoggerExecutor</h3>
+          <p>Bean <code>ThreadPoolTaskExecutor</code> criado por <code>AsyncLoggerConfig</code> com prefixo de thread <code>aspecta-logger-*</code>. Configurável via <code>logger.async.*</code>.</p>
+        </div>
+        <div class="card">
+          <h3>CallerRunsPolicy</h3>
+          <p>Ao estourar a fila (<code>queueCapacity</code>), a tarefa de log é executada na thread chamadora em vez de ser descartada — sem perda de logs sob pressão.</p>
+        </div>
+        <div class="card">
+          <h3>Guard de serialização</h3>
+          <p>Se o nível de log configurado em <code>@LogOn(level=...)</code> estiver desativado no framework (ex: DEBUG em produção), nenhuma serialização de args ocorre — zero overhead.</p>
+        </div>
+        <div class="card">
+          <h3>Propagação de contexto MDC</h3>
+          <p>O <code>AsyncLoggerConfig</code> usa um <code>TaskDecorator</code> que copia automaticamente o MDC da thread chamadora para a thread do pool — <code>traceId</code> e outros campos de contexto são preservados fim-a-fim, mesmo em logs assíncronos.</p>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top:16px">
+        <strong>Isolamento garantido:</strong> O Aspecta usa <code>@Async("aspectaLoggerExecutor")</code> — nunca o executor padrão do Spring. A configuração <code>@Async</code> da sua aplicação permanece intacta.
+      </div>
+    </section>
+
+    <!-- ═══ I18N ═══ -->
+    <section id="i18n">
+      <div class="section-header">
+        <div class="section-icon icon-blue">🌍</div>
+        <h2>Internacionalização (i18n)</h2>
+      </div>
+      <p>O Aspecta suporta mensagens de log em múltiplos idiomas via <code>ResourceBundleMessageSource</code>.</p>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>messages.properties</h3>
+          <p>Arquivo padrão (Português). Fallback quando nenhum locale específico é encontrado.</p>
+        </div>
+        <div class="card">
+          <h3>messages_en.properties</h3>
+          <p>Mensagens em Inglês para locales <code>en</code>, <code>en-US</code>, etc.</p>
+        </div>
+        <div class="card">
+          <h3>messages_pt_BR.properties</h3>
+          <p>Mensagens em Português Brasileiro (locale padrão configurado).</p>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:16px">
+        <div class="code-header">
+          <span class="code-lang">messages_en.properties</span>
+          <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+        </div>
+        <pre><span class="ann">log.entry</span><span class="op">=</span><span class="str">Entering method: {0}() with | Args: {1}</span>
+<span class="ann">log.exit</span><span class="op">=</span><span class="str">Exiting method: {0}() returned | Return: {1}</span>
+<span class="ann">log.error</span><span class="op">=</span><span class="str">Error in method {0}: {1} - {2}</span></pre>
+      </div>
+
+      <p>O <code>DelegatingMessageProvider</code> usa o padrão <em>Strategy</em> para alternar entre <code>I18nMessageProvider</code> e <code>DefaultMessageProvider</code> conforme <code>logger.enable-i18n</code>.</p>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ═══ IMPROVEMENTS — LOGS ═══ -->
+    <section id="improvements-log">
+      <div class="section-header">
+        <div class="section-icon icon-green">✅</div>
+        <h2>Implementado — Melhorias de Logs</h2>
+      </div>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Incluir Correlation ID / Trace ID nos logs</h4>
+            <p>Adicionar automaticamente o <code>traceId</code> ou <code>spanId</code> do MDC (Mapped Diagnostic Context) em cada linha de log. Essencial para rastrear requisições em ambientes distribuídos (Jaeger, Zipkin, OpenTelemetry).</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Saída esperada</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="str">[MEU-PROJETO][UserService][traceId=abc123] Entering method: createUser()...</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Medir e logar o tempo de execução do método</h4>
+            <p>O aspecto já usa <code>@Around</code> — aproveitar para calcular <code>System.currentTimeMillis()</code> antes e depois da execução e incluir a duração no log de saída.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Saída esperada</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="str">[MEU-PROJETO][UserService] Exiting createUser() | Return: ... | Duration: 142ms</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Suporte a níveis de log configuráveis por anotação</h4>
+            <p>Permitir que o nível de log (DEBUG, INFO, WARN) seja definido na própria anotação <code>@LogOn</code>, para diferenciar métodos críticos de métodos comuns.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Java — Proposta</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">true</span>, level <span class="op">=</span> <span class="cls">LogLevel</span><span class="op">.</span>DEBUG)</pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Logar exceções com stack trace configurável</h4>
+            <p>Atualmente o log de erro registra apenas a mensagem. Adicionar opção para incluir o stack trace completo (controlado por property ou por anotação), diferenciando erros de negócio (sem stack trace) de erros técnicos (com stack trace).</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Anotação @LogSkip para excluir métodos específicos</h4>
+            <p>Quando <code>@LogOn</code> está na classe inteira, permitir suprimir o log de métodos específicos com <code>@LogSkip</code> — evitando sobreposição de configuração global vs. método.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ IMPROVEMENTS — SAÍDAS ═══ -->
+    <section id="improvements-out">
+      <div class="section-header">
+        <div class="section-icon icon-green">✅</div>
+        <h2>Implementado — Melhorias de Saídas</h2>
+      </div>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Suporte a RFC 7807 (Problem Details for HTTP APIs)</h4>
+            <p>Adotar o padrão <code>application/problem+json</code> com campos <code>type</code>, <code>title</code>, <code>status</code>, <code>detail</code>, <code>instance</code>. Spring 6 já oferece <code>ProblemDetail</code> como classe base — fácil integração.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">JSON — RFC 7807</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="op">{</span>
+  <span class="str">"type"</span><span class="op">:</span> <span class="str">"https://api.meuapp.com/errors/user-not-found"</span><span class="op">,</span>
+  <span class="str">"title"</span><span class="op">:</span> <span class="str">"Usuário não encontrado"</span><span class="op">,</span>
+  <span class="str">"status"</span><span class="op">:</span> <span class="num">404</span><span class="op">,</span>
+  <span class="str">"detail"</span><span class="op">:</span> <span class="str">"Nenhum usuário com id=42 foi localizado."</span><span class="op">,</span>
+  <span class="str">"instance"</span><span class="op">:</span> <span class="str">"/api/user/42"</span>
+<span class="op">}</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Campo "errorCode" nas respostas de erro</h4>
+            <p>Incluir um código de erro legível por máquina (ex: <code>"USER_NOT_FOUND"</code>, <code>"VALIDATION_ERROR"</code>) além da mensagem textual. Clientes API podem usar o código para internacionalizar mensagens no frontend sem depender de strings do backend.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Internacionalização das mensagens de erro da API</h4>
+            <p>Atualmente o i18n cobre apenas os logs. Estender o suporte para as mensagens retornadas nas respostas de erro (<code>message</code> do <code>BasicResponse</code>), respeitando o <code>Accept-Language</code> da requisição.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Status como inteiro, não String</h4>
+            <p>O campo <code>status</code> nos DTOs atualmente é serializado como <code>String</code> (ex: <code>"404"</code>). Alterar para <code>int</code> para facilitar parsing por clientes e alinhar com convenções de APIs REST e RFC 7807.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ IMPROVEMENTS — FUNCIONALIDADES ═══ -->
+    <section id="improvements-feat">
+      <div class="section-header">
+        <div class="section-icon icon-green">✅</div>
+        <h2>Implementado — Novas Funcionalidades</h2>
+      </div>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>@LogOn em nível de classe</h4>
+            <p>Permitir aplicar <code>@LogOn</code> diretamente na classe para logar todos os métodos públicos sem anotar um por um — com possibilidade de sobrescrever configurações por método.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Java — Proposta</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="ann">@Service</span>
+<span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="cls">UserService</span> <span class="op">{</span> <span class="cmt">// todos os métodos logados</span>
+    <span class="ann">@LogSkip</span>
+    <span class="kw">public</span> <span class="kw">void</span> healthCheck() <span class="op">{}</span> <span class="cmt">// exceto este</span>
+<span class="op">}</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Handlers para exceções comuns do ecossistema Spring</h4>
+            <p>Adicionar tratamento automático para: <code>HttpMessageNotReadableException</code> (body inválido), <code>NoHandlerFoundException</code> (404 de rota), <code>MethodNotAllowedException</code> (405), <code>DataIntegrityViolationException</code> (banco). Hoje o usuário precisa tratar estas manualmente.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Configuração de thread pool para logging assíncrono</h4>
+            <p>Expor propriedades para configurar o executor assíncrono: tamanho do core pool, max pool, capacidade da fila. Atualmente usa o executor padrão do Spring, que pode ser inadequado para alta carga.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">YAML — Proposta</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="ann">logger</span><span class="op">:</span>
+  <span class="ann">async</span><span class="op">:</span>
+    <span class="ann">core-pool-size</span><span class="op">:</span> <span class="num">2</span>
+    <span class="ann">max-pool-size</span><span class="op">:</span> <span class="num">8</span>
+    <span class="ann">queue-capacity</span><span class="op">:</span> <span class="num">500</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Evitar serialização desnecessária quando log está desabilitado</h4>
+            <p>O <code>SensitiveDataMasker</code> serializa os argumentos em JSON mesmo quando <code>logger.enabled=false</code> ou o nível de log está acima do nível configurado. Checar o estado <strong>antes</strong> de serializar para economizar CPU/memória.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-sec">Segurança</span>
+          <div class="imp-content">
+            <h4>Mascaramento de valores numéricos sensíveis</h4>
+            <p>O regex atual <code>(?i)("key"\s*:\s*")[^"]+"</code> só mascara valores de string JSON (entre aspas). Valores numéricos como <code>"cpf": 12345678900</code> (sem aspas) não são mascarados — ajustar o padrão para cobrir ambos os casos.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Regex — Proposta</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="cmt">// Atual: mascara apenas strings</span>
+<span class="str">(?i)("cpf"\s*:\s*")[^"]+"</span>
+
+<span class="cmt">// Proposto: mascara strings e números</span>
+<span class="str">(?i)("cpf"\s*:\s*)("?)[^",}\s]+"?</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Spring Boot Auto-configuration (META-INF/spring)</h4>
+            <p>Registrar os beans do Aspecta via <code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code> para que a biblioteca seja configurada automaticamente sem precisar de nenhum import adicional na aplicação consumidora.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>Actuator endpoint para verificar configuração ativa</h4>
+            <p>Endpoint <code>/actuator/aspecta</code> expõe o estado atual da biblioteca: logging habilitado, nome do projeto, i18n, <code>structured-output</code>, contagem de chaves sensíveis e saúde do pool assíncrono em tempo real (<code>activeThreads</code>, <code>queueSize</code>, <code>queueCapacity</code>, <code>queueUsagePct</code>). Ativado automaticamente quando <code>spring-boot-starter-actuator</code> está no classpath.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Implementado</span>
+          <div class="imp-content">
+            <h4>excludeFromMask — exibir campos sensíveis em métodos específicos</h4>
+            <p>Parâmetro <code>excludeFromMask</code> no <code>@LogOn</code> permite exibir campos em plain text mesmo que estejam listados em <code>logger.sensitive-keys</code>. Útil para métodos de diagnóstico, auditoria ou ambientes de desenvolvimento.</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Java — uso</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="cmt">// Mostra email em plain text, mascara password e token</span>
+<span class="ann">@LogOn</span>(sensitiveData <span class="op">=</span> <span class="kw">true</span>, excludeFromMask <span class="op">=</span> <span class="op">{</span><span class="str">"email"</span><span class="op">})</span>
+<span class="kw">public void</span> auditLogin(<span class="cls">String</span> email, <span class="cls">String</span> password, <span class="cls">String</span> token) <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></pre>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ═══ SECURITY OVERVIEW ═══ -->
+    <section id="sec-overview">
+      <div class="section-header">
+        <div class="section-icon icon-red">🔒</div>
+        <h2>Segurança — Visão Geral</h2>
+      </div>
+      <p>Esta seção documenta as vulnerabilidades identificadas na base de código do Aspecta, classificadas por severidade, com o estado de cada issue (corrigida ou pendente) e recomendações de mitigação.</p>
+
+      <div class="grid grid-3" style="margin-top:20px">
+        <div class="card">
+          <div class="card-icon">🔴</div>
+          <h3>Críticas</h3>
+          <p>Vulnerabilidades que permitem exploração direta ou comprometimento de dados — corrija antes de publicar.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🟠</div>
+          <h3>Altas</h3>
+          <p>Riscos que podem vazar informações sensíveis ou afetar a integridade dos logs em cenários reais.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🟡</div>
+          <h3>Médias</h3>
+          <p>Issues que degradam robustez, cobertura de mascaramento ou comportamento esperado sob condições adversas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECURITY CRITICAL ═══ -->
+    <section id="sec-critical">
+      <div class="section-header">
+        <div class="section-icon icon-red">🔴</div>
+        <h2>Críticas</h2>
+      </div>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>AsyncLoggerConfig sobrescrevia o executor global da aplicação</h4>
+            <p>
+              A implementação de <code>AsyncConfigurer</code> em <code>AsyncLoggerConfig</code> substituía o executor padrão
+              de <strong>todos</strong> os <code>@Async</code> da aplicação consumidora pelo pool da biblioteca,
+              causando potencial starvation de threads, quebra de configurações de retry/timeout e comportamento imprevisível.
+            </p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Antes (vulnerável)</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="kw">public class</span> <span class="cls">AsyncLoggerConfig</span> <span class="kw">implements</span> <span class="cls">AsyncConfigurer</span> <span class="op">{</span>
+    <span class="ann">@Override</span> <span class="kw">public</span> <span class="cls">Executor</span> getAsyncExecutor() <span class="op">{</span> <span class="op">...</span> <span class="op">}</span> <span class="cmt">// global!</span>
+<span class="op">}</span></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Depois (corrigido)</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="ann">@Bean</span>(name <span class="op">=</span> <span class="str">"aspectaLoggerExecutor"</span>)
+<span class="kw">public</span> <span class="cls">TaskExecutor</span> aspectaLoggerExecutor() <span class="op">{</span> <span class="op">...</span> <span class="op">}</span>
+<span class="cmt">// AsyncLoggerService usa @Async("aspectaLoggerExecutor") — isolado</span></pre>
+            </div>
+            <p><strong>Impacto:</strong> Corrupção silenciosa do comportamento assíncrono de toda a aplicação. <strong>Corrigido</strong> com bean nomeado e <code>@Async("aspectaLoggerExecutor")</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Injeção de Regex via <code>sensitive-keys</code> — ReDoS</h4>
+            <p>
+              As chaves configuradas em <code>logger.sensitive-keys</code> eram interpoladas diretamente no padrão regex sem escapamento.
+              Um valor como <code>"pass.ord"</code> tornava-se um regex funcional e poderia mascarar campos não intencionais;
+              valores como <code>"(a+)+"</code> abriam vetor de <strong>ReDoS (Regular Expression Denial of Service)</strong>,
+              podendo travar a JVM em strings de entrada cuidadosamente construídas.
+            </p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Antes (vulnerável)</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="cmt">// key inserido cru no padrão — qualquer metacaracter é executado</span>
+json.replaceAll(<span class="str">"(?i)(\"" + key + "\"\\s*:\\s*\")[^\"]+"</span>, <span class="str">"$1***\""</span>);</pre>
+            </div>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Depois (corrigido)</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="kw">String</span> quotedKey <span class="op">=</span> <span class="cls">Pattern</span>.quote(key); <span class="cmt">// escapa todos os metacaracteres</span>
+json.replaceAll(<span class="str">"(?i)(\"" + quotedKey + "\"\\s*:\\s*\")[^\"]*\""</span>, <span class="str">"$1***\""</span>);</pre>
+            </div>
+            <p><strong>Impacto:</strong> Disponibilidade (DoS) e bypass de mascaramento. <strong>Fix:</strong> <code>Pattern.quote(key)</code> em <code>SensitiveDataMasker</code>.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ SECURITY HIGH ═══ -->
+    <section id="sec-high">
+      <div class="section-header">
+        <div class="section-icon icon-red">🟠</div>
+        <h2>Altas</h2>
+      </div>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-sec">Corrigido</span>
+          <div class="imp-content">
+            <h4>Valores numéricos JSON não mascarados</h4>
+            <p>
+              O regex original <code>(?i)("key"\s*:\s*")[^"]+"</code> exige que o valor esteja entre aspas duplas.
+              Valores numéricos como <code>"cpf": 12345678900</code> ou <code>"token": 9999</code> (sem aspas) não eram mascarados,
+              expondo dados sensíveis nos logs mesmo com <code>sensitiveData = true</code>.
+            </p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Cenário — antes</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="cmt">// Input: { "cpf": 12345678900, "name": "João" }</span>
+<span class="cmt">// Log (errado): { "cpf": 12345678900, "name": "João" }  ← CPF exposto!</span></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Fix aplicado</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="cmt">// Segunda passagem para valores numéricos</span>
+json.replaceAll(<span class="str">"(?i)(\"" + quotedKey + "\"\\s*:\\s*)(-?\\d+(?:\\.\\d+)?)"</span>, <span class="str">"$1\"***\""</span>);</pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Valores de retorno não são mascarados</h4>
+            <p>
+              Apenas os <em>argumentos</em> de entrada passavam pelo <code>SensitiveDataMasker</code>.
+              O valor de retorno era serializado via <code>String.valueOf(result)</code> sem filtro,
+              expondo campos como <code>password</code> ou <code>cpf</code> no log de saída.
+            </p>
+            <p><strong>Corrigido:</strong> <code>masker.sanitizeResult(result, sensitiveData, excludeFromMask)</code> é aplicado ao retorno antes de passar ao <code>exitMessage</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4><code>CompleteResponse.details</code> controlado por <code>logger.expose-exception-details</code></h4>
+            <p>
+              O campo <code>details</code> de <code>CompleteResponse</code> era preenchido com
+              <code>cause.getMessage()</code> da exceção raiz sem nenhuma sanitização,
+              podendo conter queries SQL, file paths ou credenciais de conexão.
+            </p>
+            <p><strong>Corrigido:</strong> A propriedade <code>logger.expose-exception-details</code> (padrão <code>false</code>) controla se o cause é exposto. Em produção o campo <code>details</code> é sempre <code>null</code>. Habilite apenas em ambientes não-produção:</p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">YAML — desenvolvimento</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="ann">logger</span><span class="op">:</span>
+  <span class="ann">expose-exception-details</span><span class="op">:</span> <span class="kw">true</span>  <span class="cmt"># nunca habilitar em produção</span></pre>
+            </div>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Mensagens de exceção logadas sem mascaramento</h4>
+            <p>
+              O <code>LoggerAspect</code> logava o erro com <code>ex.getMessage()</code> diretamente,
+              sem passar pelo <code>SensitiveDataMasker</code>. Dados sensíveis em mensagens de exceção (ex: campos de constraint JPA) apareciam em plain text.
+            </p>
+            <p><strong>Corrigido:</strong> O bloco de catch em <code>LoggerAspect.doLog()</code> agora aplica <code>masker.sanitizeMessage(ex.getMessage(), sensitiveData, excludeFromMask)</code> antes de passar a mensagem ao provider. Testado em <code>LoggerAspectIntegrationTest.exceptionMessage_sensitiveData_isMaskedInErrorLog()</code>.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ SECURITY MEDIUM ═══ -->
+    <section id="sec-medium">
+      <div class="section-header">
+        <div class="section-icon icon-yellow">🟡</div>
+        <h2>Médias</h2>
+      </div>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Recursão sem limite em <code>extractStatus</code></h4>
+            <p>
+              O método <code>extractStatus</code> percorria a cadeia de causas via recursão sem limite de profundidade,
+              abrindo vetor de <code>StackOverflowError</code> com exceções encadeadas profundamente ou circulares.
+            </p>
+            <p><strong>Corrigido:</strong> Convertido para loop iterativo com limite de 10 níveis (<code>MAX_CAUSE_DEPTH = 10</code>) em <code>GlobalExceptionHandler</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Mensagem de validação hardcoded em Português</h4>
+            <p>
+              A constante <code>METHOD_ARGUMENT_MESSAGE</code> estava hardcoded em Português,
+              quebrando a consistência de i18n para APIs consumidas por clientes internacionais.
+            </p>
+            <p><strong>Corrigido:</strong> Mensagem movida para os bundles (<code>exception.validation.error</code>) e resolvida via <code>MessageSource</code> com <code>request.getLocale()</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4><code>@LogOn</code> no próprio <code>GlobalExceptionHandler</code></h4>
+            <p>
+              O <code>@LogOn</code> foi removido do <code>GlobalExceptionHandler</code>.
+              Handlers de exceção não devem ser interceptados pelo aspecto de logging — evitando serialização custosa
+              de <code>MethodArgumentNotValidException</code> e chamadas ao executor assíncrono durante shutdown.
+            </p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Escalonamento de nível de log em <code>logStackTrace</code></h4>
+            <p>
+              Quando <code>logStackTrace = true</code> e o nível padrão <code>level = INFO</code> estava em uso,
+              o stack trace era emitido em nível <code>ERROR</code> em vez de <code>INFO</code>, disparando alertas não intencionais.
+            </p>
+            <p><strong>Corrigido:</strong> Adicionado <code>case INFO -> log.info("Stack trace:", ex)</code> explícito no switch de <code>logStackTrace()</code>. O método é package-private para permitir testes diretos em <code>LoggerAspectStackTraceTest</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Mascaramento falha em arrays e objetos não-JSON</h4>
+            <p>
+              O <code>SensitiveDataMasker</code> usava <code>String.valueOf(arg)</code>, produzindo <code>[Ljava.lang.String;@hash]</code> para arrays — sem campos JSON para mascarar.
+            </p>
+            <p><strong>Corrigido:</strong> O método <code>toStringArg(Object)</code> agora despacha por tipo: <code>Object[]</code> → <code>Arrays.deepToString()</code>, arrays primitivos → <code>Arrays.toString()</code>, <code>Collection</code> e <code>Map</code> → serialização direta. Coberto por <code>SensitiveDataMaskerTest.SanitizeArgsCollections</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Lista padrão de <code>sensitive-keys</code> incompleta</h4>
+            <p>
+              O default anterior cobria apenas <code>password</code>, <code>senha</code>, <code>cpf</code>, <code>cnpj</code>, <code>token</code>.
+            </p>
+            <p><strong>Corrigido:</strong> A lista padrão em <code>LoggerProperties</code> foi expandida para incluir: <code>password</code>, <code>cpf</code>, <code>token</code>, <code>secret</code>, <code>apikey</code>, <code>accesstoken</code>, <code>refreshtoken</code>, <code>authorization</code>, <code>privatekey</code>, <code>creditcard</code>. Verificado em <code>LoggerPropertiesValidationTest.defaultSensitiveKeysIncludeExpandedSet()</code>.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ SECURITY IMPROVEMENTS RISKS ═══ -->
+    <section id="sec-improvements">
+      <div class="section-header">
+        <div class="section-icon icon-yellow">⚠️</div>
+        <h2>Riscos de Segurança das Melhorias Propostas</h2>
+      </div>
+      <p>As funcionalidades implementadas introduzem vetores de atenção que devem ser considerados ao configurar e operar a biblioteca em produção.</p>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Sem ação necessária</span>
+          <div class="imp-content">
+            <h4>Correlation ID / Trace ID — responsabilidade operacional, não da lib</h4>
+            <p>
+              O <code>traceId</code> do MDC é incluído <strong>apenas nos logs internos</strong> — nunca em campos de resposta HTTP.
+              Nenhum DTO (<code>BasicResponse</code>, <code>CompleteResponse</code>, <code>ProblemDetail</code>) expõe trace ou span IDs.
+              O risco é exclusivamente operacional: se o sistema de agregação de logs (Kibana, Loki, etc.) estiver acessível sem autenticação,
+              os trace IDs nos logs ficam visíveis. Isso é responsabilidade de quem opera a infraestrutura, não da lib.
+            </p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Sem ação necessária</span>
+          <div class="imp-content">
+            <h4>Endpoint Actuator <code>/actuator/aspecta</code> — proteção via Spring Security</h4>
+            <p>
+              O endpoint <strong>não expõe a lista de <code>sensitive-keys</code></strong> — a lista é intencionalmente omitida.
+              O endpoint expõe apenas estado operacional: logging habilitado, nome do projeto, i18n, <code>structured-output</code> e métricas do pool assíncrono (<code>activeThreads</code>, <code>queueSize</code>, <code>queueUsagePct</code>).
+              A proteção do actuator com autenticação e autorização é responsabilidade do projeto consumidor via Spring Security,
+              seguindo a mesma prática recomendada para qualquer endpoint <code>/actuator/*</code>.
+            </p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Thread pool do logger assíncrono — limites de configuração validados</h4>
+            <p>
+              Valores mal configurados em <code>logger.async.*</code> (ex: <code>queue-capacity: 0</code>, <code>max-pool-size: 1000</code>)
+              podiam causar exaustão de memória.
+            </p>
+            <p><strong>Corrigido:</strong> <code>LoggerProperties</code> é anotado com <code>@Validated</code> e a inner class <code>Async</code> usa constraints JSR-380. A aplicação falha no startup com mensagem clara se algum valor estiver fora dos limites:
+            <code>core-pool-size</code> (1–20), <code>max-pool-size</code> (1–100), <code>queue-capacity</code> (1–5000).</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-out">Corrigido</span>
+          <div class="imp-content">
+            <h4>Handlers de exceções do Spring não expõem mensagens internas</h4>
+            <p>
+              Os handlers de <code>HttpMessageNotReadableException</code> e <code>DataIntegrityViolationException</code>
+              <strong>não declaram a exceção como parâmetro</strong> — por design.
+              Isso impede que qualquer mensagem interna (nomes de tabelas, colunas, detalhes de parsing) seja acidentalmente incluída na resposta.
+              As respostas retornam apenas mensagens i18n genéricas via <code>MessageSource</code>.
+            </p>
+            <p>Testes de contrato em <code>ExceptionHandlerSanitizationTest</code> verificam que os bodies de resposta não contêm termos como <code>constraint</code>, <code>duplicate key</code>, <code>JsonParseException</code>, etc.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ═══ ROADMAP ═══ -->
+    <section id="sec-roadmap">
+      <div class="section-header">
+        <div class="section-icon icon-green">✅</div>
+        <h2>Roadmap — Funcionalidades Implementadas</h2>
+      </div>
+      <p>Todas as features identificadas na análise de gaps foram implementadas com testes unitários e de integração.</p>
+
+      <ul class="improvement-list">
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Mascaramento de mensagens de exceção</h4>
+            <p>
+              O <code>SensitiveDataMasker</code> é aplicado às mensagens de exceção antes de logar,
+              eliminando o vetor de vazamento em <code>LoggerAspect.doLog()</code>.
+            </p>
+            <p><strong>Implementação:</strong> <code>masker.sanitizeMessage(ex.getMessage(), sensitiveData, excludeFromMask)</code> no bloco catch. Testado em <code>LoggerAspectIntegrationTest.exceptionMessage_sensitiveData_isMaskedInErrorLog()</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Correção do nível de log em <code>logStackTrace</code> para INFO</h4>
+            <p>
+              Adicionado <code>case INFO -> log.info("Stack trace:", ex)</code> explícito no switch de <code>logStackTrace()</code>.
+              O método é agora package-private para testabilidade direta.
+            </p>
+            <p><strong>Testado em:</strong> <code>LoggerAspectStackTraceTest</code> — verifica que DEBUG→DEBUG, INFO→INFO e WARN→WARN, sem escalonamento para ERROR.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Suporte a arrays e coleções no mascaramento</h4>
+            <p>
+              <code>SensitiveDataMasker.toStringArg(Object)</code> serializa por tipo: <code>Object[]</code> → <code>Arrays.deepToString()</code>, arrays primitivos → <code>Arrays.toString()</code>, <code>Collection</code> e <code>Map</code> → serialização direta via <code>toString()</code>.
+            </p>
+            <p><strong>Testado em:</strong> <code>SensitiveDataMaskerTest.SanitizeArgsCollections</code> — cobre <code>int[]</code>, <code>String[]</code>, <code>List</code>, <code>Map</code>, <code>null</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Propagação de contexto MDC para threads assíncronas</h4>
+            <p>
+              <code>AsyncLoggerConfig.aspectaLoggerExecutor()</code> instala um <code>TaskDecorator</code> que copia <code>MDC.getCopyOfContextMap()</code> da thread chamadora e o restaura na thread do pool antes de executar cada tarefa, limpando em <code>finally</code>.
+            </p>
+            <p><strong>Testado em:</strong> <code>AsyncMdcPropagationTest</code> — 4 cenários: único traceId, múltiplas entradas MDC, limpeza após execução e MDC vazio.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Health indicator para a fila assíncrona no Actuator</h4>
+            <p>
+              <code>AspectaActuatorEndpoint</code> recebe o bean <code>ThreadPoolTaskExecutor</code> via <code>@Qualifier("aspectaLoggerExecutor")</code> e expõe em tempo real: <code>activeThreads</code>, <code>queueSize</code>, <code>queueCapacity</code> e <code>queueUsagePct</code> (com 1 casa decimal).
+            </p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Response real</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="op">{</span>
+  <span class="str">"activeThreads"</span><span class="op">:</span> <span class="num">3</span><span class="op">,</span>
+  <span class="str">"queueSize"</span><span class="op">:</span> <span class="num">42</span><span class="op">,</span>
+  <span class="str">"queueCapacity"</span><span class="op">:</span> <span class="num">500</span><span class="op">,</span>
+  <span class="str">"queueUsagePct"</span><span class="op">:</span> <span class="num">8.4</span><span class="op">,</span>
+  <span class="str">"structuredOutput"</span><span class="op">:</span> <span class="kw">false</span>
+<span class="op">}</span></pre>
+            </div>
+            <p><strong>Testado em:</strong> <code>AspectaActuatorEndpointTest</code> — verifica cálculo de percentual, activeThreads e o campo structuredOutput.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Estratégia de mascaramento customizável</h4>
+            <p>
+              A interface funcional <code>MaskingStrategy</code> permite mascaramento por padrão de <em>valor</em> (ex: CPF, cartão de crédito, e-mail parcial) sem sobrescrever o <code>SensitiveDataMasker</code>.
+              Beans do tipo <code>MaskingStrategy</code> são auto-injetados via <code>@Autowired(required=false) List&lt;MaskingStrategy&gt;</code>.
+            </p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Interface implementada</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="ann">@FunctionalInterface</span>
+<span class="kw">public interface</span> <span class="cls">MaskingStrategy</span> <span class="op">{</span>
+    <span class="cls">String</span> apply(<span class="cls">String</span> input);
+<span class="op">}</span>
+
+<span class="cmt">// Uso — registrar como @Bean no projeto consumidor:</span>
+<span class="ann">@Bean</span>
+<span class="cls">MaskingStrategy</span> cpfStrategy() <span class="op">{</span>
+    <span class="kw">return</span> input <span class="op">-></span> input.replaceAll(<span class="str">"\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"</span>, <span class="str">"***.***.***-**"</span>);
+<span class="op">}</span></pre>
+            </div>
+            <p><strong>Testado em:</strong> <code>MaskingStrategyTest</code> — CPF, cartão de crédito, múltiplas estratégias em cadeia, apply em args/message/result.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Logging estruturado (JSON logs)</h4>
+            <p>
+              Quando <code>logger.structured-output: true</code>, cada log é emitido como JSON via <code>buildStructuredJson()</code> em <code>LoggerAspect</code>.
+              Strings e números são escapados (aspas e barras invertidas). O campo <code>traceId</code> é incluído somente quando presente no MDC.
+            </p>
+            <div class="code-block">
+              <div class="code-header"><span class="code-lang">Formato emitido</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+              <pre><span class="op">{</span><span class="str">"event"</span><span class="op">:</span><span class="str">"exit"</span><span class="op">,</span><span class="str">"project"</span><span class="op">:</span><span class="str">"ASPECTA-DEMO"</span><span class="op">,</span><span class="str">"class"</span><span class="op">:</span><span class="str">"UserService"</span><span class="op">,</span><span class="str">"method"</span><span class="op">:</span><span class="str">"create"</span><span class="op">,</span><span class="str">"result"</span><span class="op">:</span><span class="str">"ok"</span><span class="op">,</span><span class="str">"durationMs"</span><span class="op">:</span><span class="num">42</span><span class="op">,</span><span class="str">"traceId"</span><span class="op">:</span><span class="str">"abc123"</span><span class="op">}</span></pre>
+            </div>
+            <p><strong>Testado em:</strong> <code>StructuredLoggingTest</code> (6 casos via reflexão) e <code>LoggerAspectIntegrationTest.structuredOutput_emitsJson()</code>.</p>
+          </div>
+        </li>
+
+        <li class="improvement-item">
+          <span class="imp-badge badge-feat">Implementado</span>
+          <div class="imp-content">
+            <h4>Ampliação do default de <code>sensitive-keys</code></h4>
+            <p>
+              A lista padrão em <code>LoggerProperties</code> cobre agora 10 padrões:
+              <code>password</code>, <code>cpf</code>, <code>token</code>, <code>secret</code>, <code>apikey</code>,
+              <code>accesstoken</code>, <code>refreshtoken</code>, <code>authorization</code>, <code>privatekey</code>, <code>creditcard</code>.
+              Projetos que adotam a lib sem configuração personalizada já estão protegidos contra os campos mais comuns.
+            </p>
+            <p><strong>Testado em:</strong> <code>LoggerPropertiesValidationTest.defaultSensitiveKeysIncludeExpandedSet()</code>.</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+  </div><!-- /content -->
+</main>
+
+<footer>
+  <p>aspecta v1.0.0 · <a href="https://github.com/boscolodev/aspecta" target="_blank">github.com/boscolodev/aspecta</a> · MIT License · Guilherme Boscolo de Souza</p>
+  <p style="color: var(--muted); font-size: 0.75rem">Documentação gerada automaticamente</p>
+</footer>
+
+<script>
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

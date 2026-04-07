@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: aspectaLib
+
+logger:
+  enabled: true
+  enable-i18n: true
+  projectName: ASPECTA
+  sensitive-keys:
+    - password
+    - secret
+    - senha
+    - token
+    - key
+    - cpf
+    - cnpj
+  async:
+    core-pool-size: 2
+    max-pool-size: 8
+    queue-capacity: 500
